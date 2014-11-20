@@ -65,9 +65,9 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 	return stSelect;
 	}
 
-	public void insertSpot(SQLiteDatabase db, String inputTitle, String inputLocation, String inputComment) {
+	public void insertSpot(SQLiteDatabase db, String inputTitle,String inputComment) {
 		// TODO 自動生成されたメソッド・スタブ
-		String sqlstr = "insert into Spot (title,location,comment) values('" + inputTitle + "','" + inputLocation + "','" + inputComment + "');";
+		String sqlstr = "insert into Spot (title,comment) values('" + inputTitle + "','" + inputComment + "');";
 		try{
 			db.beginTransaction();
 			db.execSQL(sqlstr);

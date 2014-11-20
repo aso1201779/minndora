@@ -121,17 +121,14 @@ public class D_entry extends Activity implements View.OnClickListener{
 
 			case R.id.Send:
 				EditText title = (EditText)findViewById(R.id.Title);
-				EditText location = (EditText)findViewById(R.id.Location);
 				EditText comment = (EditText)findViewById(R.id.Comment);
 
 				String inputTitle = title.getText().toString();
-				String inputLocation = location.getText().toString();
 				String inputComment = comment.getText().toString();
 
-					if(inputTitle != null && !inputTitle.isEmpty()
-						&& inputLocation != null && !inputLocation.isEmpty()){
+					if(inputTitle != null && !inputTitle.isEmpty()){
 
-						helper.insertSpot(db, inputTitle, inputLocation, inputComment);
+						helper.insertSpot(db, inputTitle, inputComment);
 
 
 						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -164,7 +161,6 @@ public class D_entry extends Activity implements View.OnClickListener{
 						alert.show();
 					}
 				title.setText("");
-				location.setText("");
 				comment.setText("");
 			break;
 
@@ -173,8 +169,6 @@ public class D_entry extends Activity implements View.OnClickListener{
 					Rtitle.setText("");
 					EditText Rcomment = (EditText)findViewById(R.id.Comment);
 					Rcomment.setText("");
-					EditText Rlacation = (EditText)findViewById(R.id.Location);
-					Rlacation.setText("");
 
 					ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
 					imageView1.setImageResource(R.drawable.noimage);
@@ -241,18 +235,14 @@ public class D_entry extends Activity implements View.OnClickListener{
 			options.inSampleSize = 4; // 元の1/4サイズでbitmap取得
 
 			switch(requestCode){
-				case 1: // ギャラリーの場合
-					try{
-						ContentResolver cr = getContentResolver();
-						String[] columns = {MediaStore.Images.Media.DATA};
-						Cursor c = cr.query(data.getData(), columns, null, null, null);
-						c.moveToFirst();
-						bitmapUri = Uri.fromFile(new File(c.getString(0)));
+				case 2: // ギャラリーの場合
+					try {
 						InputStream is = getContentResolver().openInputStream(data.getData());
-						bm = BitmapFactory.decodeStream(is, null, options);
+						bm = BitmapFactory.decodeStream(is);
 						is.close();
-					}catch(Exception e){
-						e.printStackTrace();
+						// 選択した画像を表示
+					} catch (Exception e) {
+
 					}
 				break;
 			}

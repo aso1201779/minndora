@@ -1,6 +1,27 @@
 package com.example.test24;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,13 +34,16 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 
 public class Login extends Activity implements View.OnClickListener{
 
 	SQLiteDatabase db = null;
 	MySQLiteOpenHelper helper = null;
-
+	private JSONArray rootObjectArray;
+	String inputloginID;
+	String inputloginpass;
 
 
 	@Override
@@ -59,32 +83,20 @@ public class Login extends Activity implements View.OnClickListener{
 		case R.id.login:
 			EditText ID = (EditText)findViewById(R.id.userID);
 			EditText pass = (EditText)findViewById(R.id.password);
-			String inputloginID = ID.getText().toString();
-			String inputloginpass = pass.getText().toString();
+			inputloginID = ID.getText().toString();
+			inputloginpass = pass.getText().toString();
 
 				if(inputloginID != null && !inputloginID.isEmpty()
 					&& inputloginpass != null && !inputloginpass.isEmpty()){
 
-					if(inputloginID.length() > 5 && inputloginpass.length() > 5){
+					if(inputloginID.length() < 8  && inputloginpass.length() < 9){
 
-
-						String strSelect = helper.selectMember(db, inputloginID, inputloginpass);
-						if(strSelect != null){
-							intent = new Intent(Login.this, Home.class);
-							intent.putExtra("username", strSelect);
-							startActivity(intent);
-
-						}else{
-							AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-							alertDialogBuilder.setMessage("IDまたは\npassが違います。")
-
-							 .setPositiveButton("OK", null);
-							AlertDialog alert = alertDialogBuilder.create();
-							alert.show();
-						}
+						//JSONの呼び出し
+						exec_post();
+						//String strSelect = helper.selectMember(db, inputloginID, inputloginpass);
 					}else{
 						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-						alertDialogBuilder.setMessage("文字数が足りません")
+						alertDialogBuilder.setMessage("文字数が多いです")
 
 						 .setPositiveButton("OK", null);
 						AlertDialog alert = alertDialogBuilder.create();
@@ -119,6 +131,152 @@ public class Login extends Activity implements View.OnClickListener{
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
+	 private void exec_post() {
+
+		    Log.d("posttest", "postします");
+
+		    HashMap<String,Object> ret = null;
+
+		    // URL
+		    URI url = null;
+		    try {
+		      url = new URI( "http://54.68.202.192/getname.php" );
+		      Log.d("posttest", "URLはOK");
+		    } catch (URISyntaxException e) {
+		      e.printStackTrace();
+		      //String code =toString(ret.getStatusLine().getStatusCode());
+		      //ret = e.toString();
+		    }
+
+		    // POSTパラメータ付きでPOSTリクエストを構築
+		    HttpPost request = new HttpPost( url );
+
+		    /*
+		    List<NameValuePair> post_params\e = new ArrayList<NameValuePair>();
+		    post_params.add(new BasicNameValuePair("post_1", "ユーザID"));
+		    post_params.add(new BasicNameValuePair("post_2", "パスワード"));
+		    */
+
+
+		    HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		    hashMap.put("menberID", inputloginID);
+		    hashMap.put("password",inputloginpass );
+		    Log.d("menberID",inputloginID);
+		    Log.d("password",inputloginpass);
+
+
+		    //オブジェクトクラスHashMap　キーワードと値をペアでセット
+
+		    try {
+			    request.setHeader("Content-Type", "application/json; charset=utf-8");
+			    //
+			    Type mapType = new TypeToken<HashMap<String, Object>>() {}.getType();
+			    //HashMapをJSONに変換
+			    request.setEntity(new StringEntity(new Gson().toJson(hashMap, mapType)));
+			    //同上
+
+			    /*
+			    // 送信パラメータのエンコードを指定
+		        request.setEntity(new UrlEncodedFormEntity(post_params, "UTF-8"));
+		        */
+
+		    } catch (UnsupportedEncodingException e1) {
+		        e1.printStackTrace();
+		    }
+
+		    // POSTリクエストを実行
+		    DefaultHttpClient httpClient = new DefaultHttpClient();
+		    try {
+		      Log.d("posttest", "POST開始");
+
+		      // POSTを実行して、戻ってきたJSONをHashMapの形にして受け取る
+		      ret = httpClient.execute(request, new MyResponseHandler());
+		      //
+
+
+		    } catch (IOException e) {
+		      Log.d("posttest", "通信に失敗：" + e.toString());
+		    } finally {
+		      // shutdownすると通信できなくなる
+		      httpClient.getConnectionManager().shutdown();
+		    }
+
+		    // 受信結果をUIに表示
+	}
+	 public class MyResponseHandler implements ResponseHandler<HashMap<String,Object>> {
+
+			@Override
+			public HashMap<String,Object> handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+				// TODO 自動生成されたメソッド・スタブ
+				//		          Log.d(
+				//		            "posttest",
+				//		            "レスポンスコード：" + response.getStatusLine().getStatusCode()
+
+				HashMap<String,Object> retMap = new HashMap<String,Object>();
+
+	            // 正常に受信できた場合は200
+		          switch (response.getStatusLine().getStatusCode()) {
+			          case HttpStatus.SC_OK:
+			            Log.d("posttest", "レスポンス取得に成功");
+
+			            try {
+			            		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			            		response.getEntity().writeTo(outputStream);
+			            		String data;
+			            		data = outputStream.toString(); // JSONデータ
+			            		rootObjectArray = new JSONArray(data);
+
+
+			            		JSONObject jsonobject = rootObjectArray.getJSONObject(0);
+
+
+			            		String username = jsonobject.getString("username");
+			            		String menberID = jsonobject.getString("menberID");
+			            		Log.d("username",username);
+			            		Log.d("menberID",menberID);
+
+			            		retMap.put("username", username);
+			            		retMap.put("menberID_2", menberID);
+
+			            		String GETusername = (String)retMap.get("username");
+			            		String GETmenberID = (String)retMap.get("menberID");
+			            		Log.d("response","1");
+			      		      	Log.d("response","2");
+			      		      	Intent intent = null;
+			      		      	intent = new Intent(Login.this, Home.class);
+			      		      	intent.putExtra("userID", GETmenberID);
+			      		      	intent.putExtra("username",GETusername );
+			      		      	startActivity(intent);
+
+
+			            } catch (Exception e) {
+			            	Log.d("Json取得エラー", "Error");
+			            	retMap.put("status_code", "220");
+			            }
+
+			            break;
+
+			          case HttpStatus.SC_NOT_FOUND:
+			            Log.d("posttest", "データが存在しない");
+			            retMap.put("status_code", "404");
+			            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Login.this);
+						alertDialogBuilder.setMessage("IDまたは\npassが違います。")
+
+						 .setPositiveButton("OK", null);
+						AlertDialog alert = alertDialogBuilder.create();
+						alert.show();
+			            break;
+
+			          default:
+			            Log.d("posttest", "通信エラー");
+			            retMap.put("status_code", "500");
+			            break;
+		          }
+		          return retMap;
+
+			}
+	 }
 
 
 
