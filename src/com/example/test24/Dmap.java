@@ -1,11 +1,26 @@
 package com.example.test24;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,7 +29,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -43,14 +57,23 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class Dmap extends Activity implements LocationListener ,View.OnClickListener{
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+public class Dmap extends Activity implements LocationListener ,View.OnClickListener, UploadAsyncTaskCallback{
 
 	private WebView mWebView;
 	private LocationManager mLocationManager;
 	String username;
+	String userID;
+	String mapID = new SimpleDateFormat("ddHHmmss").format(new Date());;
+	String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+	String mapURL = "image.jpg";
 	private Bitmap bm;
 	private Uri bitmapUri;
 	static final int REQUEST_CODE_CAMERA = 1; /* カメラを判定するコード */
+	String filename;
+
 
 
 	@Override
@@ -72,17 +95,16 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 		});
 		Intent intent = getIntent();
 		username = intent.getStringExtra("username");
+		userID = intent.getStringExtra("userID");
+
 		ImageView cameraBtn =(ImageView)findViewById(R.id.cameraBtn);
 		cameraBtn.setOnClickListener(this);
+		Button MapEndBtn = (Button)findViewById(R.id.MapEndBtn);
+		MapEndBtn.setOnClickListener(this);
 	}
 
 	@Override
 	protected void onResume() {
-
-		Button MapEndBtn = (Button)findViewById(R.id.MapEndBtn);
-		MapEndBtn.setOnClickListener(this);
-
-
 		// TODO 自動生成されたメソッド・スタブ
 		if(mLocationManager != null){
 			mLocationManager.requestLocationUpdates(
@@ -114,7 +136,7 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 				// 確認ダイアログの生成
 		        AlertDialog.Builder alertDlg = new AlertDialog.Builder(this);
 		        alertDlg.setTitle("エラー");
-		        alertDlg.setMessage("メッセージ");
+		        alertDlg.setMessage("ネットワークに接続できません。");
 		        alertDlg.setPositiveButton(
 		            "OK",
 		            new DialogInterface.OnClickListener() {
@@ -238,6 +260,12 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 							public void onClick(DialogInterface dialog, int id) {
 								// TODO 自動生成されたメソッド・スタブ
 
+								//画像をアップロードする。
+		            			//まだ実装していないので後で書き換える
+
+
+
+
 								// 取ったキャプチャの幅と高さを元に
 		                        // 新しいBitmapを生成する。
 		                        Bitmap  bitmap = Bitmap.createBitmap(
@@ -257,12 +285,14 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 						            folder.mkdirs();
 						        }
 
+						        filename = System.currentTimeMillis() + ".jpg";
 						        // NewFolderに保存する画像のパス
-						        File file = new File(folder,System.currentTimeMillis() + ".jpg");
-						        Log.d("画像パス","インポート");
+						        File file = new File(folder,filename);
+						        Log.d("画像パス_インポート",filename);
 						        if (file.exists()) {
 						            file.delete();
 						        }
+
 
 						        try {
 						        	Log.d("保存","成功");
@@ -281,9 +311,13 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 						            e.printStackTrace();
 						        }
 
-								Intent intent = new Intent(Dmap.this,D_entry.class);
-								intent.putExtra("username", username);
-								startActivity(intent);
+						        String filepath = folderPath +  filename;
+						        upload(filepath,filename);
+
+						      //JSONの呼び出し
+								map_date_post();
+
+
 							}
 				});
 				//キャンセルボタン処理
@@ -384,5 +418,203 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
             throw e;
         }
     }
+
+	 private void map_date_post() {
+
+		    Log.d("posttest", "postします");
+
+		    HashMap<String,Object> ret = null;
+
+		    // URL
+		    URI url = null;
+		    try {
+		      url = new URI( "http://54.68.202.192/mapinsert.php" );
+		      Log.d("posttest", "URLはOK");
+		    } catch (URISyntaxException e) {
+		      e.printStackTrace();
+		      //String code =toString(ret.getStatusLine().getStatusCode());
+		      //ret = e.toString();
+		    }
+
+		    // POSTパラメータ付きでPOSTリクエストを構築
+		    HttpPost request = new HttpPost( url );
+
+		    /*
+		    List<NameValuePair> post_params\e = new ArrayList<NameValuePair>();
+		    post_params.add(new BasicNameValuePair("post_1", "ユーザID"));
+		    post_params.add(new BasicNameValuePair("post_2", "パスワード"));
+		    */
+
+
+		    HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		    hashMap.put("menberID", userID);
+		    hashMap.put("mapID",mapID);
+		    hashMap.put("mapdate", date);
+		    hashMap.put("mapurl",filename );
+
+		    Log.d("menberID",userID);
+		    Log.d("mapID",mapID);
+		    Log.d("mapdate",date);
+		    Log.d("mapURL",filename);
+
+
+
+		    //オブジェクトクラスHashMap　キーワードと値をペアでセット
+
+		    try {
+			    request.setHeader("Content-Type", "application/json; charset=utf-8");
+			    //
+			    Type mapType = new TypeToken<HashMap<String, Object>>() {}.getType();
+			    //HashMapをJSONに変換
+			    request.setEntity(new StringEntity(new Gson().toJson(hashMap, mapType)));
+			    //同上
+
+			    /*
+			    // 送信パラメータのエンコードを指定
+		        request.setEntity(new UrlEncodedFormEntity(post_params, "UTF-8"));
+		        */
+
+		    } catch (UnsupportedEncodingException e1) {
+		        e1.printStackTrace();
+		    }
+
+		    // POSTリクエストを実行
+		    DefaultHttpClient httpClient = new DefaultHttpClient();
+		    try {
+		      Log.d("posttest", "POST開始");
+
+		      // POSTを実行して、戻ってきたJSONをHashMapの形にして受け取る
+		      ret = httpClient.execute(request, new MyResponseHandler());
+		      //
+
+		    } catch (IOException e) {
+		      Log.d("posttest", "通信に失敗：" + e.toString());
+		    } finally {
+		      // shutdownすると通信できなくなる
+		      httpClient.getConnectionManager().shutdown();
+		    }
+
+		    // 受信結果をUIに表示
+	}
+	 public class MyResponseHandler implements ResponseHandler<HashMap<String,Object>> {
+
+			@Override
+
+
+			public HashMap<String,Object> handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+				// TODO 自動生成されたメソッド・スタブ
+				//		          Log.d(
+				//		            "posttest",
+				//		            "レスポンスコード：" + response.getStatusLine().getStatusCode()
+
+				HashMap<String,Object> retMap = new HashMap<String,Object>();
+
+	            // 正常に受信できた場合は200
+				switch (response.getStatusLine().getStatusCode()) {
+		          case HttpStatus.SC_OK:
+		            Log.d("posttest", "レスポンス取得に成功");
+
+		            try {
+
+		            	String GETresponce = EntityUtils.toString(response.getEntity(),"UTF-8");
+	            		GETresponce = String.valueOf(GETresponce.charAt(1));
+
+	            		Log.d("GETresponce",GETresponce);
+	            		if (GETresponce.equals("0")){
+	            			Log.d("GETresponce","0だったよ");
+
+	            			Intent intent = new Intent(Dmap.this,D_entry.class);
+
+							intent.putExtra("username", username);
+							intent.putExtra("userID", userID);
+							intent.putExtra("mapID", mapID);
+							intent.putExtra("spotID", "1");
+							startActivity(intent);
+
+	            		}else if (GETresponce.equals("1")){
+	            			Log.d("GETresponce","１だったよ");
+	            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Dmap.this);
+							alertDialogBuilder.setMessage("１だったよ")
+
+
+							.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									Intent intent = new Intent(Dmap.this,Login.class);
+									startActivity(intent);
+
+								}
+							});
+							AlertDialog alert = alertDialogBuilder.create();
+							//設定画面へ移動するかの問い合わせダイアログを表示
+							alert.show();
+
+	            		}else{
+	            			Log.d("GETresponce","どれでもなかったよ");
+	            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Dmap.this);
+							alertDialogBuilder.setMessage("どれでもなかったよ")
+
+
+							.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									Intent intent = new Intent(Dmap.this,Login.class);
+									startActivity(intent);
+
+								}
+							});
+							AlertDialog alert = alertDialogBuilder.create();
+							//設定画面へ移動するかの問い合わせダイアログを表示
+							alert.show();
+
+	            		}
+
+		      		      retMap.put("status_code", "200");
+
+		            } catch (Exception e) {
+		            	Log.d("Json取得エラー", "Error");
+		            	retMap.put("status_code", "220");
+		            }
+
+		            break;
+
+		          case HttpStatus.SC_NOT_FOUND:
+		            Log.d("posttest", "データが存在しない");
+		            retMap.put("status_code", "404");
+		            break;
+
+		          default:
+		            Log.d("posttest", "通信エラー");
+		            retMap.put("status_code", "500");
+		            break;
+	          }
+	          return retMap;
+			}
+	 }
+	 public void upload(String... str){
+			//Task生成
+		    UploadAsyncTask up = new UploadAsyncTask(this,this);
+		    up.execute(str[0],str[1]);
+		}
+
+	@Override
+	public void onSuccessUpload(String result) {
+		// TODO 自動生成されたメソッド・スタブ
+
+	}
+
+	@Override
+	public void onFailedUpload() {
+		// TODO 自動生成されたメソッド・スタブ
+
+	}
+
+
 
 }

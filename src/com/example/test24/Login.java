@@ -237,7 +237,7 @@ public class Login extends Activity implements View.OnClickListener{
 			            		Log.d("menberID",menberID);
 
 			            		retMap.put("username", username);
-			            		retMap.put("menberID_2", menberID);
+			            		retMap.put("menberID", menberID);
 
 			            		String GETusername = (String)retMap.get("username");
 			            		String GETmenberID = (String)retMap.get("menberID");

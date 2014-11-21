@@ -64,99 +64,12 @@ public class Member_entry extends Activity implements View.OnClickListener{
 	String inputname;
 	String inputyear;
 	String inputseibetu;
-//
-//	private InputFilter[] filters = { new MyFilter() };
-//
-//    class MyFilter implements InputFilter {
-//        public CharSequence filter(CharSequence source, int start, int end,
-//                                   Spanned dest, int dstart, int dend) {
-//
-//            if( source.toString().matches("^[a-zA-Z0-9]+$") ){
-//                return source;
-//            }else{
-//                return "";
-//            }
-//        }
-//    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.member_entry);
-//		EditText userID = (EditText)findViewById(R.id.userID);
-//        userID.setFilters(filters);
-
-//		InputFilter inputFilter = new InputFilter() {
-//		    @Override
-//		    public CharSequence filter(CharSequence source, int start, int end,
-//		            Spanned dest, int dstart, int dend) {
-//		    	if(source.toString().matches("[a-zA-Z0-9]")){
-//		            return source;
-//		        } else {
-//		            return "";
-//		        }
-//		    }
-//		};
-//		// フィルターの配列を作成
-//					InputFilter[] filters = new InputFilter[] { inputFilter };
-//					// フィルターの配列をセット
-//					aaa.setFilters(filters);
-//					bbb.setFilters(filters);
-
-		//queue
-        // RequestQueue queue = Volley.newRequestQueue(this);
-
-        /*
-        //url
-        String url = "http://54.63.202.192/test.php";
-
-        //request生成
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET,url,null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject jsonObject) {
-
-                        //JSONの処理
-                        try{
-
-                            //１階層目は普通に
-                            //String status = jsonObject.getString("status");
-                            //出力
-                           // Log.v("tama", "status=" + status);
-
-                            //2階層目（配列）
-                            JSONArray menber = jsonObject.getJSONArray("menber");
-                            //ループ
-                            for(int i=0;i<members.length();i++){
-
-                                //JSONObjectとして１つ１つ取得
-                                JSONObject menberID = menberID.getJSONObject(i);
-                                    //明日を取得（ListViewとかに追加）
-                                String menberID = member.getString("menberID");
-                                String seibetu = member.getString("seibetu");
-                                String birthyear = menberID.String("birthyear");
-                                //出力
-                                Log.v("seibetu" + seibetu);
-                                Log.v("birthyear=" + birthyear);
-                            }
-
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
-
-                    }
-                },
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error){
-
-                    }
-                }
-        );
-
-		*/
-
 
 		// ラジオグループ
 		final RadioGroup rgSelect = (RadioGroup)findViewById(R.id.radioGroup1);

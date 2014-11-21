@@ -38,14 +38,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp" >
 
-        <TextView
-            android:id="@+id/textView3"
+        <Button
+            android:id="@+id/gazouBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="20sp"
-            android:text="写真を追加"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:layout_marginLeft="20dp"
+            android:text="写真を追加" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -58,22 +57,7 @@
             android:layout_width="82dp"
             android:layout_height="82dp"
             android:layout_marginLeft="20dp"
-            android:layout_weight="0.33"
-            android:src="@drawable/noimage" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="82dp"
-            android:layout_height="82dp"
-            android:layout_weight="0.33"
-            android:src="@drawable/noimage" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="82dp"
-            android:layout_height="82dp"
-            android:layout_weight="0.33"
-            android:src="@drawable/noimage" />
+            android:layout_weight="0.33" />
 
     </LinearLayout>
 

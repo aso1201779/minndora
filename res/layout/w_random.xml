@@ -30,23 +30,20 @@
     </ListView>
 
     <LinearLayout
+        android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical" >
 
         <Button
             android:id="@+id/backbtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="60dp"
             android:layout_marginRight="60dp"
             android:text="選択画面に戻る" />
-
-        <Button
-            android:id="@+id/skipbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="スキップ" />
 
     </LinearLayout>
 

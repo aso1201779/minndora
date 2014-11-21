@@ -1,9 +1,29 @@
 package com.example.test24;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import com.example.test24.Member_entry.MyResponseHandler;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,6 +41,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,16 +50,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 
-public class D_entry extends Activity implements View.OnClickListener{
+public class D_entry extends Activity implements View.OnClickListener, UploadAsyncTaskCallback{
 
 	SQLiteDatabase db = null;
 	MySQLiteOpenHelper helper = null;
 	String username;
+	String userID;
+	String mapID;
+	String spotID;
 	int viewID ;
 	private Bitmap bm;
 	private Uri bitmapUri;
 	static final int REQUEST_CODE_CAMERA = 1; /* カメラを判定するコード */
 	static final int REQUEST_CODE_GALLERY = 2; /* ギャラリーを判定するコード */
+
+	String inputTitle;
+	String inputComment;
+	String folderPath;
+	String filename;
+	boolean flg = false;
 
 
 
@@ -52,12 +82,10 @@ public class D_entry extends Activity implements View.OnClickListener{
 		Dentry.setOnClickListener(this);
 		Button DReset =(Button)findViewById(R.id.Reset);
 		DReset.setOnClickListener(this);
+		Button gazouBtn =(Button)findViewById(R.id.gazouBtn);
+		gazouBtn.setOnClickListener(this);
 		ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
 		imageView1.setOnClickListener(this);
-		ImageView imageView2 =(ImageView)findViewById(R.id.imageView2);
-		imageView2.setOnClickListener(this);
-		ImageView imageView3 =(ImageView)findViewById(R.id.imageView3);
-		imageView3.setOnClickListener(this);
 
 		if(db == null){
 			 helper = new MySQLiteOpenHelper(getApplicationContext());
@@ -77,6 +105,9 @@ public class D_entry extends Activity implements View.OnClickListener{
 		setContentView(R.layout.d_entry);
 		Intent intent = getIntent();
 		username = intent.getStringExtra("username");
+		userID = intent.getStringExtra("userID");
+		mapID = intent.getStringExtra("mapID");
+		spotID = intent.getStringExtra("spotID");
 	}
 
 	@Override
@@ -106,16 +137,9 @@ public class D_entry extends Activity implements View.OnClickListener{
 
 		switch(v.getId()) {
 
-			case R.id.imageView1:
+			case R.id.gazouBtn:
+
 				viewID = 1;
-				camera();
-				break;
-			case R.id.imageView2:
-				viewID = 2;
-				camera();
-				break;
-			case R.id.imageView3:
-				viewID = 3;
 				camera();
 				break;
 
@@ -123,42 +147,23 @@ public class D_entry extends Activity implements View.OnClickListener{
 				EditText title = (EditText)findViewById(R.id.Title);
 				EditText comment = (EditText)findViewById(R.id.Comment);
 
-				String inputTitle = title.getText().toString();
-				String inputComment = comment.getText().toString();
+				inputTitle = title.getText().toString();
+				inputComment = comment.getText().toString();
 
 					if(inputTitle != null && !inputTitle.isEmpty()){
 
-						helper.insertSpot(db, inputTitle, inputComment);
+						//JSONの呼び出し
+						exec_post();
+						//helper.insertSpot(db, inputTitle, inputComment);
+
+						if(flg == true){
+						String filepath = folderPath +  filename;
+				        upload(filepath,filename);
+				        //photo_post();
+						}
 
 
-						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-						alertDialogBuilder.setMessage("登録完了しました。\n登録を続けますか？")
-						.setCancelable(false)
 
-						//GPS設定画面起動用ボタンとイベントの定義
-						.setPositiveButton("終了",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog, int id) {
-										// TODO 自動生成されたメソッド・スタブ
-										endpop();
-									}
-						});
-						//キャンセルボタン処理
-						alertDialogBuilder.setNegativeButton("続ける",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int id) {
-										// TODO 自動生成されたメソッド・スタブ
-										Intent intent = new Intent(D_entry.this,D_entry.class);
-										intent.putExtra("username", username);
-										startActivity(intent);
-									}
-								});
-						AlertDialog alert = alertDialogBuilder.create();
-						//設定画面へ移動するかの問い合わせダイアログを表示
-						alert.show();
 					}
 				title.setText("");
 				comment.setText("");
@@ -172,10 +177,6 @@ public class D_entry extends Activity implements View.OnClickListener{
 
 					ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
 					imageView1.setImageResource(R.drawable.noimage);
-					ImageView imageView2 =(ImageView)findViewById(R.id.imageView2);
-					imageView2.setImageResource(R.drawable.noimage);
-					ImageView imageView3 =(ImageView)findViewById(R.id.imageView3);
-					imageView3.setImageResource(R.drawable.noimage);
 				break;
 		}
 	}
@@ -191,10 +192,12 @@ public class D_entry extends Activity implements View.OnClickListener{
 				// TODO 自動生成されたメソッド・スタブ
 				switch(which){
 					case 0:
+						flg = true;
 						wakeupGallery(); // ギャラリー起動
 						break;
 					default:
 						// キャンセルを選んだ場合
+						flg = false;
 						break;
 							}
 				}
@@ -213,6 +216,8 @@ public class D_entry extends Activity implements View.OnClickListener{
 		String timeStamp = new SimpleDateFormat("yyyMMddHHmmss").format(new Date());
 		File mediaFile;
 		mediaFile = new File(mediaStorageDir.getPath() + File.separator + timeStamp + ".JPG");
+		folderPath = mediaStorageDir.getPath() + File.separator;
+		filename = timeStamp + ".JPG";
 		Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		bitmapUri = Uri.fromFile(mediaFile);
 		i.putExtra(MediaStore.EXTRA_OUTPUT, bitmapUri); // 画像をmediaUriに書き込み
@@ -252,16 +257,6 @@ public class D_entry extends Activity implements View.OnClickListener{
 				imageView1.setImageBitmap(bm); // imgView（イメージビュー）を準備しておく
 				bm = null;
 				break;
-			case 2:
-				ImageView imageView2 =(ImageView)findViewById(R.id.imageView2);
-				imageView2.setImageBitmap(bm); // imgView（イメージビュー）を準備しておく
-				bm = null;
-				break;
-			case 3:
-				ImageView imageView3 =(ImageView)findViewById(R.id.imageView3);
-				imageView3.setImageBitmap(bm); // imgView（イメージビュー）を準備しておく
-				bm = null;
-				break;
 			}
 
 		}
@@ -290,5 +285,435 @@ public class D_entry extends Activity implements View.OnClickListener{
 		//設定画面へ移動するかの問い合わせダイアログを表示
 		alert.show();
 	}
+
+
+
+	 private void exec_post() {
+
+		    Log.d("posttest", "postします");
+
+		    HashMap<String,Object> ret = null;
+
+		    // URL
+		    URI url = null;
+		    try {
+		      url = new URI( "http://54.68.202.192/spotinsert.php" );
+		      Log.d("posttest", "URLはOK");
+		    } catch (URISyntaxException e) {
+		      e.printStackTrace();
+		      //String code =toString(ret.getStatusLine().getStatusCode());
+		      //ret = e.toString();
+		    }
+
+		    // POSTパラメータ付きでPOSTリクエストを構築
+		    HttpPost request = new HttpPost( url );
+
+		    /*
+		    List<NameValuePair> post_params\e = new ArrayList<NameValuePair>();
+		    post_params.add(new BasicNameValuePair("post_1", "ユーザID"));
+		    post_params.add(new BasicNameValuePair("post_2", "パスワード"));
+		    */
+
+
+		    HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		    hashMap.put("menberID", userID);
+		    hashMap.put("mapID", mapID);
+		    hashMap.put("spotID", spotID);
+		    hashMap.put("Title", inputTitle);
+		    hashMap.put("comment", inputComment);
+		    Log.d("menberID",userID);
+		    Log.d("mapID",mapID);
+		    Log.d("spotID",spotID);
+		    Log.d("title",inputTitle);
+		    Log.d("comment",inputComment);
+
+
+
+		    //オブジェクトクラスHashMap　キーワードと値をペアでセット
+
+		    try {
+			    request.setHeader("Content-Type", "application/json; charset=utf-8");
+			    //
+			    Type mapType = new TypeToken<HashMap<String, Object>>() {}.getType();
+			    //HashMapをJSONに変換
+			    request.setEntity(new StringEntity(new Gson().toJson(hashMap, mapType)));
+			    //同上
+
+			    /*
+			    // 送信パラメータのエンコードを指定
+		        request.setEntity(new UrlEncodedFormEntity(post_params, "UTF-8"));
+		        */
+
+		    } catch (UnsupportedEncodingException e1) {
+		        e1.printStackTrace();
+		    }
+
+		    // POSTリクエストを実行
+		    DefaultHttpClient httpClient = new DefaultHttpClient();
+		    try {
+		      Log.d("posttest", "POST開始");
+
+		      // POSTを実行して、戻ってきたJSONをHashMapの形にして受け取る
+		      ret = httpClient.execute(request, new MyResponseHandler());
+		      //
+
+		    } catch (IOException e) {
+		      Log.d("posttest", "通信に失敗：" + e.toString());
+		    } finally {
+		      // shutdownすると通信できなくなる
+		      httpClient.getConnectionManager().shutdown();
+		    }
+
+		    // 受信結果をUIに表示
+	}
+	 public class MyResponseHandler implements ResponseHandler<HashMap<String,Object>> {
+
+			@Override
+			public HashMap<String,Object> handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+				// TODO 自動生成されたメソッド・スタブ
+				//		          Log.d(
+				//		            "posttest",
+				//		            "レスポンスコード：" + response.getStatusLine().getStatusCode()
+
+				HashMap<String,Object> retMap = new HashMap<String,Object>();
+
+	            // 正常に受信できた場合は200
+				switch (response.getStatusLine().getStatusCode()) {
+		          case HttpStatus.SC_OK:
+		            Log.d("posttest", "レスポンス取得に成功");
+
+		            try {
+		            		String GETresponce = EntityUtils.toString(response.getEntity(),"UTF-8");
+//		            		GETresponce = String.valueOf(GETresponce.charAt(1));
+
+		            		Log.d("GETresponce",GETresponce);
+		            		if (GETresponce.equals("0")){
+		            			Log.d("GETresponce","0だったよ");
+		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
+								alertDialogBuilder.setMessage("登録完了しました。\n登録を続けますか？")
+								.setCancelable(false)
+
+								//GPS設定画面起動用ボタンとイベントの定義
+								.setPositiveButton("終了",
+										new DialogInterface.OnClickListener() {
+
+											@Override
+											public void onClick(DialogInterface dialog, int id) {
+												// TODO 自動生成されたメソッド・スタブ
+												endpop();
+											}
+								});
+								//キャンセルボタン処理
+								alertDialogBuilder.setNegativeButton("続ける",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int id) {
+												// TODO 自動生成されたメソッド・スタブ
+												Intent intent = new Intent(D_entry.this,D_entry.class);
+												intent.putExtra("username", username);
+												intent.putExtra("userID", userID);
+												intent.putExtra("mapID", mapID);
+												Integer NextSpotID = Integer.parseInt(spotID) + 1;
+												spotID = NextSpotID.toString();
+												intent.putExtra("spotID", spotID);
+												startActivity(intent);
+											}
+										});
+								AlertDialog alert = alertDialogBuilder.create();
+								//設定画面へ移動するかの問い合わせダイアログを表示
+								alert.show();
+
+		            		}else if (GETresponce.equals("1")){
+		            			Log.d("GETresponce","１だったよ");
+		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
+								alertDialogBuilder.setMessage("１だったよ")
+
+
+								.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int id) {
+										// TODO 自動生成されたメソッド・スタブ
+										Intent intent = new Intent(D_entry.this,Login.class);
+										startActivity(intent);
+
+									}
+								});
+								AlertDialog alert = alertDialogBuilder.create();
+								//設定画面へ移動するかの問い合わせダイアログを表示
+								alert.show();
+		            		}else{
+		            			Log.d("GETresponce","どれでもなかったよ");
+		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
+								alertDialogBuilder.setMessage("どっちでもなかったよ")
+
+
+								.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int id) {
+										// TODO 自動生成されたメソッド・スタブ
+										Intent intent = new Intent(D_entry.this,Login.class);
+										startActivity(intent);
+
+									}
+								});
+								AlertDialog alert = alertDialogBuilder.create();
+								//設定画面へ移動するかの問い合わせダイアログを表示
+								alert.show();
+		            		}
+
+
+		            	Intent intent = new Intent(D_entry.this,Login.class);
+						startActivity(intent);
+		      		      retMap.put("status_code", "200");
+
+		            } catch (Exception e) {
+		            	Log.d("Json取得エラー", "Error");
+		            	retMap.put("status_code", "220");
+		            }
+
+		            break;
+
+		          case HttpStatus.SC_NOT_FOUND:
+		            Log.d("posttest", "データが存在しない");
+		            retMap.put("status_code", "404");
+		            break;
+
+		          default:
+		            Log.d("posttest", "通信エラー");
+		            retMap.put("status_code", "500");
+		            break;
+	          }
+	          return retMap;
+			}
+	 }
+	 public void upload(String... str){
+			//Task生成
+		    UploadAsyncTask up = new UploadAsyncTask(this,this);
+		    up.execute(str[0],str[1]);
+		}
+
+
+
+	@Override
+	public void onSuccessUpload(String result) {
+		// TODO 自動生成されたメソッド・スタブ
+
+	}
+
+
+
+	@Override
+	public void onFailedUpload() {
+		// TODO 自動生成されたメソッド・スタブ
+
+	}
+
+
+	 private void photo_post() {
+
+		    Log.d("posttest", "postします");
+
+		    HashMap<String,Object> ret = null;
+
+		    // URL
+		    URI url = null;
+		    try {
+		      url = new URI( "http://54.68.202.192/spotinsert.php" );
+		      Log.d("posttest", "URLはOK");
+		    } catch (URISyntaxException e) {
+		      e.printStackTrace();
+		      //String code =toString(ret.getStatusLine().getStatusCode());
+		      //ret = e.toString();
+		    }
+
+		    // POSTパラメータ付きでPOSTリクエストを構築
+		    HttpPost request = new HttpPost( url );
+
+		    /*
+		    List<NameValuePair> post_params\e = new ArrayList<NameValuePair>();
+		    post_params.add(new BasicNameValuePair("post_1", "ユーザID"));
+		    post_params.add(new BasicNameValuePair("post_2", "パスワード"));
+		    */
+
+
+		    HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		    hashMap.put("menberID", userID);
+		    hashMap.put("mapID", mapID);
+		    hashMap.put("spotID", spotID);
+		    hashMap.put("Title", inputTitle);
+		    hashMap.put("comment", inputComment);
+		    Log.d("menberID",userID);
+		    Log.d("mapID",mapID);
+		    Log.d("spotID",spotID);
+		    Log.d("title",inputTitle);
+		    Log.d("comment",inputComment);
+
+
+
+		    //オブジェクトクラスHashMap　キーワードと値をペアでセット
+
+		    try {
+			    request.setHeader("Content-Type", "application/json; charset=utf-8");
+			    //
+			    Type mapType = new TypeToken<HashMap<String, Object>>() {}.getType();
+			    //HashMapをJSONに変換
+			    request.setEntity(new StringEntity(new Gson().toJson(hashMap, mapType)));
+			    //同上
+
+			    /*
+			    // 送信パラメータのエンコードを指定
+		        request.setEntity(new UrlEncodedFormEntity(post_params, "UTF-8"));
+		        */
+
+		    } catch (UnsupportedEncodingException e1) {
+		        e1.printStackTrace();
+		    }
+
+		    // POSTリクエストを実行
+		    DefaultHttpClient httpClient = new DefaultHttpClient();
+		    try {
+		      Log.d("posttest", "POST開始");
+
+		      // POSTを実行して、戻ってきたJSONをHashMapの形にして受け取る
+		      ret = httpClient.execute(request, new MyResponseHandler2());
+		      //
+
+		    } catch (IOException e) {
+		      Log.d("posttest", "通信に失敗：" + e.toString());
+		    } finally {
+		      // shutdownすると通信できなくなる
+		      httpClient.getConnectionManager().shutdown();
+		    }
+
+		    // 受信結果をUIに表示
+	}
+	 public class MyResponseHandler2 implements ResponseHandler<HashMap<String,Object>> {
+
+			@Override
+			public HashMap<String,Object> handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+				// TODO 自動生成されたメソッド・スタブ
+				//		          Log.d(
+				//		            "posttest",
+				//		            "レスポンスコード：" + response.getStatusLine().getStatusCode()
+
+				HashMap<String,Object> retMap = new HashMap<String,Object>();
+
+	            // 正常に受信できた場合は200
+				switch (response.getStatusLine().getStatusCode()) {
+		          case HttpStatus.SC_OK:
+		            Log.d("posttest", "レスポンス取得に成功");
+
+		            try {
+		            		String GETresponce = EntityUtils.toString(response.getEntity(),"UTF-8");
+//		            		GETresponce = String.valueOf(GETresponce.charAt(1));
+
+		            		Log.d("GETresponce",GETresponce);
+		            		if (GETresponce.equals("0")){
+		            			Log.d("GETresponce","0だったよ");
+		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
+								alertDialogBuilder.setMessage("登録完了しました。\n登録を続けますか？")
+								.setCancelable(false)
+
+								//GPS設定画面起動用ボタンとイベントの定義
+								.setPositiveButton("終了",
+										new DialogInterface.OnClickListener() {
+
+											@Override
+											public void onClick(DialogInterface dialog, int id) {
+												// TODO 自動生成されたメソッド・スタブ
+												endpop();
+											}
+								});
+								//キャンセルボタン処理
+								alertDialogBuilder.setNegativeButton("続ける",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int id) {
+												// TODO 自動生成されたメソッド・スタブ
+												Intent intent = new Intent(D_entry.this,D_entry.class);
+												intent.putExtra("username", username);
+												intent.putExtra("userID", userID);
+												intent.putExtra("mapID", mapID);
+												Integer NextSpotID = Integer.parseInt(spotID) + 1;
+												spotID = NextSpotID.toString();
+												intent.putExtra("spotID", spotID);
+												startActivity(intent);
+											}
+										});
+								AlertDialog alert = alertDialogBuilder.create();
+								//設定画面へ移動するかの問い合わせダイアログを表示
+								alert.show();
+
+		            		}else if (GETresponce.equals("1")){
+		            			Log.d("GETresponce","１だったよ");
+		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
+								alertDialogBuilder.setMessage("１だったよ")
+
+
+								.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int id) {
+										// TODO 自動生成されたメソッド・スタブ
+										Intent intent = new Intent(D_entry.this,Login.class);
+										startActivity(intent);
+
+									}
+								});
+								AlertDialog alert = alertDialogBuilder.create();
+								//設定画面へ移動するかの問い合わせダイアログを表示
+								alert.show();
+		            		}else{
+		            			Log.d("GETresponce","どれでもなかったよ");
+		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
+								alertDialogBuilder.setMessage("どっちでもなかったよ")
+
+
+								.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int id) {
+										// TODO 自動生成されたメソッド・スタブ
+										Intent intent = new Intent(D_entry.this,Login.class);
+										startActivity(intent);
+
+									}
+								});
+								AlertDialog alert = alertDialogBuilder.create();
+								//設定画面へ移動するかの問い合わせダイアログを表示
+								alert.show();
+		            		}
+
+
+		            	Intent intent = new Intent(D_entry.this,Login.class);
+						startActivity(intent);
+		      		      retMap.put("status_code", "200");
+
+		            } catch (Exception e) {
+		            	Log.d("Json取得エラー", "Error");
+		            	retMap.put("status_code", "220");
+		            }
+
+		            break;
+
+		          case HttpStatus.SC_NOT_FOUND:
+		            Log.d("posttest", "データが存在しない");
+		            retMap.put("status_code", "404");
+		            break;
+
+		          default:
+		            Log.d("posttest", "通信エラー");
+		            retMap.put("status_code", "500");
+		            break;
+	          }
+	          return retMap;
+			}
+	 }
 
 }

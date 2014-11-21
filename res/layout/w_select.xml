@@ -22,7 +22,6 @@
             android:layout_marginBottom="0dp"
             android:text="見たいマップを選択してください。"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -52,121 +51,70 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:text="女" />
-
         </RadioGroup>
-
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="355dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="9" >
+        android:layout_width="263dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="45dp"
+        android:orientation="vertical" >
 
-        <CheckBox
-            android:id="@+id/Ten"
+        <RadioGroup
+            android:id="@+id/radioGroupyear"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:checked="false"
-            android:text="10代" />
-    </LinearLayout>
+            android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:layout_width="355dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="9" >
+            <RadioButton
+                android:id="@+id/Ten"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10代" />
 
-        <CheckBox
-            android:id="@+id/Twenty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:checked="false"
-            android:text="20代" />
+            <RadioButton
+                android:id="@+id/Twenty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20代" />
 
-    </LinearLayout>
+            <RadioButton
+                android:id="@+id/Thirty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30代" />
 
-    <LinearLayout
-        android:layout_width="355dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="9" >
+            <RadioButton
+                android:id="@+id/Forty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="40代" />
 
-        <CheckBox
-            android:id="@+id/Thirty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:checked="false"
-            android:text="30代" />
-    </LinearLayout>
+            <RadioButton
+                android:id="@+id/Fifty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50代" />
 
-    <LinearLayout
-        android:layout_width="355dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="9" >
-
-        <CheckBox
-            android:id="@+id/Forty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:checked="false"
-            android:text="40代" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="355dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="9" >
-
-        <CheckBox
-            android:id="@+id/Fifty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:checked="false"
-            android:text="50代" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="355dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="9" >
-
-        <CheckBox
-            android:id="@+id/Sixty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:checked="false"
-            android:text="60代以上" />
+            <RadioButton
+                android:id="@+id/Sixty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60代" />
+        </RadioGroup>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:layout_weight="9" >
 
         <Button
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="140dp"
+            android:layout_marginLeft="120dp"
             android:text="次へ" />
     </LinearLayout>
 

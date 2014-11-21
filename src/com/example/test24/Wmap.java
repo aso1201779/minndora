@@ -1,17 +1,25 @@
 package com.example.test24;
 
+import java.io.InputStream;
+import java.net.URL;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 public class Wmap extends Activity implements View.OnClickListener{
 
 	String username;
 	String userID;
+	String mapdate;
+	String mapURL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +29,35 @@ public class Wmap extends Activity implements View.OnClickListener{
 		Intent intent = getIntent();
 		username = intent.getStringExtra("username");
 		userID = intent.getStringExtra("userID");
+		mapdate = intent.getStringExtra("mapdate");
+	    mapURL = intent.getStringExtra("mapURL");
+
+	    //StrictModeを設定 penaltyDeathを取り除く
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
+
+         //TextViewを取得
+         ImageView test = (ImageView)findViewById(R.id.imageView1);
+         //画像のURL
+         String urlString="http://54.68.202.192/img/" + mapURL;
+
+         try {
+             //URLクラス
+            URL url = new URL(urlString);
+             //入力ストリームを開く
+            InputStream istream = url.openStream();
+
+             //画像をDrawableで取得
+            Drawable d = Drawable.createFromStream(istream, "webimg");
+
+             //入力ストリームを閉じる
+            istream.close();
+
+             //TextViewの背景に表示
+            test.setBackgroundDrawable(d);
+
+         } catch (Exception e) {
+             System.out.println("nuu: "+e);
+         }
 	}
 
 	@Override
