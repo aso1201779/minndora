@@ -2,10 +2,12 @@ package com.example.test24;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -26,10 +28,14 @@ import com.google.gson.reflect.TypeToken;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class W_Random extends Activity implements View.OnClickListener {
 
@@ -62,6 +68,40 @@ public class W_Random extends Activity implements View.OnClickListener {
 		title = intent.getStringExtra("title");
 		photoURL= intent.getStringExtra("photoURL");
 		mapURL = intent.getStringExtra("mapURL");
+		Log.d("mapURL_random",mapURL);
+
+		TextView tv = (TextView)findViewById(R.id.textRandom);
+		tv.setText(GETusername + "さんのマップ");
+
+		TextView w_title = (TextView)findViewById(R.id.w_title);
+		w_title.setText(title);
+
+		//StrictModeを設定 penaltyDeathを取り除く
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
+
+         //TextViewを取得
+         ImageView test = (ImageView)findViewById(R.id.w_photo);
+         //画像のURL
+         String urlString="http://54.68.202.192/img/" + photoURL;
+
+         try {
+             //URLクラス
+            URL url = new URL(urlString);
+             //入力ストリームを開く
+            InputStream istream = url.openStream();
+
+             //画像をDrawableで取得
+            Drawable d = Drawable.createFromStream(istream, "webimg");
+
+             //入力ストリームを閉じる
+            istream.close();
+
+             //TextViewの背景に表示
+            test.setBackgroundDrawable(d);
+
+         } catch (Exception e) {
+             System.out.println("nuu: "+e);
+         }
 
 	}
 
@@ -83,8 +123,12 @@ public class W_Random extends Activity implements View.OnClickListener {
 		switch(v.getId()){
 		case R.id.watchMap:
 
-			//JSONの呼び出し
-			exec_post();
+			intent = new Intent(W_Random.this,Wmap.class);
+
+		      intent.putExtra("username", username);
+		      intent.putExtra("userID", userID);
+		      intent.putExtra("mapURL",mapURL);
+		      startActivity(intent);
 
 
 			break;
@@ -95,155 +139,5 @@ public class W_Random extends Activity implements View.OnClickListener {
 			break;
 		}
 	}
-
-	private void exec_post() {
-
-	    Log.d("posttest", "postします");
-
-	    HashMap<String,Object> ret = null;
-
-	    // URL
-	    URI url = null;
-	    try {
-	      url = new URI( "http://54.68.202.192/getmap2.php" );
-	      Log.d("posttest", "URLはOK");
-	    } catch (URISyntaxException e) {
-	      e.printStackTrace();
-	      //String code =toString(ret.getStatusLine().getStatusCode());
-	      //ret = e.toString();
-	    }
-
-	    // POSTパラメータ付きでPOSTリクエストを構築
-	    HttpPost request = new HttpPost( url );
-
-	    /*
-	    List<NameValuePair> post_params\e = new ArrayList<NameValuePair>();
-	    post_params.add(new BasicNameValuePair("post_1", "ユーザID"));
-	    post_params.add(new BasicNameValuePair("post_2", "パスワード"));
-	    */
-
-
-	    HashMap<String, Object> hashMap = new HashMap<String, Object>();
-	    hashMap.put("menberID",GETmenberID );
-	    hashMap.put("mapID",mapID );
-	    Log.d("menberID",GETmenberID);
-	    Log.d("mapID",mapID);
-
-
-	    //オブジェクトクラスHashMap　キーワードと値をペアでセット
-
-	    try {
-		    request.setHeader("Content-Type", "application/json; charset=utf-8");
-		    //
-		    Type mapType = new TypeToken<HashMap<String, Object>>() {}.getType();
-		    //HashMapをJSONに変換
-		    request.setEntity(new StringEntity(new Gson().toJson(hashMap, mapType)));
-		    //同上
-
-		    /*
-		    // 送信パラメータのエンコードを指定
-	        request.setEntity(new UrlEncodedFormEntity(post_params, "UTF-8"));
-	        */
-
-	    } catch (UnsupportedEncodingException e1) {
-	        e1.printStackTrace();
-	    }
-
-	    // POSTリクエストを実行
-	    DefaultHttpClient httpClient = new DefaultHttpClient();
-	    try {
-	      Log.d("posttest", "POST開始");
-
-	      // POSTを実行して、戻ってきたJSONをHashMapの形にして受け取る
-	      ret = httpClient.execute(request, new MyResponseHandler());
-	      //
-
-
-	    } catch (IOException e) {
-	      Log.d("posttest", "通信に失敗：" + e.toString());
-	    } finally {
-	      // shutdownすると通信できなくなる
-	      httpClient.getConnectionManager().shutdown();
-	    }
-
-	    // 受信結果をUIに表示
-}
- public class MyResponseHandler implements ResponseHandler<HashMap<String,Object>> {
-
-		@Override
-		public HashMap<String,Object> handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
-			// TODO 自動生成されたメソッド・スタブ
-			//		          Log.d(
-			//		            "posttest",
-			//		            "レスポンスコード：" + response.getStatusLine().getStatusCode()
-
-			HashMap<String,Object> retMap = new HashMap<String,Object>();
-
-            // 正常に受信できた場合は200
-	          switch (response.getStatusLine().getStatusCode()) {
-		          case HttpStatus.SC_OK:
-		            Log.d("posttest", "レスポンス取得に成功");
-
-		            try {
-		            		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		            		response.getEntity().writeTo(outputStream);
-		            		String data;
-		            		data = outputStream.toString(); // JSONデータ
-		            		rootObjectArray = new JSONArray(data);
-
-		            		//ループ処理をしたい
-		            		JSONObject jsonobject = rootObjectArray.getJSONObject(0);
-
-
-		            		String mapdate = jsonobject.getString("mapdate");
-		            		String mapURL = jsonobject.getString("mapURL");
-
-		            		Log.d("mapdate",mapdate);
-		            		Log.d("mapID",mapURL);
-
-		            		retMap.put("mapdate", mapdate);
-		            		retMap.put("mapURL", mapURL);
-
-		            		String GETmapdate = (String)retMap.get("mapdate");
-		            		String GETmapURL = (String)retMap.get("mapURL");
-		            		Log.d("response","1");
-
-
-		      		      	Intent intent = null;
-		      		      intent = new Intent(W_Random.this,Wmap.class);
-
-		      		      intent.putExtra("username", username);
-		      		      intent.putExtra("userID", userID);
-
-		      		      intent.putExtra("mapdate", GETmapdate);
-		      		      intent.putExtra("mapURL",GETmapURL);
-		      		      startActivity(intent);
-
-
-
-		            } catch (Exception e) {
-		            	Log.d("Json取得エラー", "Error");
-		            	retMap.put("status_code", "220");
-		            }
-
-		            break;
-
-		          case HttpStatus.SC_NOT_FOUND:
-		            Log.d("posttest", "データが存在しない");
-		            retMap.put("status_code", "404");
-
-		            break;
-
-		          default:
-		            Log.d("posttest", "通信エラー");
-		            retMap.put("status_code", "500");
-		            break;
-	          }
-	          return retMap;
-
-		}
- }
-
-
 
 }

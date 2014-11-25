@@ -1,6 +1,5 @@
 package com.example.test24;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,22 +20,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import com.example.test24.Member_entry.MyResponseHandler;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
-import android.media.MediaScannerConnection.OnScanCompletedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -48,6 +39,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 public class D_entry extends Activity implements View.OnClickListener, UploadAsyncTaskCallback{
@@ -152,15 +146,26 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 
 					if(inputTitle != null && !inputTitle.isEmpty()){
 
-						//JSONの呼び出し
-						exec_post();
-						//helper.insertSpot(db, inputTitle, inputComment);
 
 						if(flg == true){
-						String filepath = folderPath +  filename;
-				        upload(filepath,filename);
-				        //photo_post();
+							Log.d("flg","画像をアップロードするよ");
+					        upload(folderPath,filename);
+					        photo_post();
+					        //必ずphotoURLをPOSTしなければならないのか分らん。getmap.phpでテーブル内に値がなかったら
+					        //エラーになるのかね？
+
 						}
+
+						//JSONの呼び出し
+						exec_post();
+
+						//photoURLもPOSTできたら嬉しい。けど、getmap.phpを書き換えんといかん
+
+						//helper.insertSpot(db, inputTitle, inputComment);
+
+
+
+
 
 
 
@@ -204,25 +209,7 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 		}).show();
 	}
 
-	protected void wakeupCamera(){
-		File mediaStorageDir = new File(
-			Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_PICTURES
-			), "PictureSaveDir"
-		);
-		if (! mediaStorageDir.exists() & ! mediaStorageDir.mkdir()){
-			return;
-		}
-		String timeStamp = new SimpleDateFormat("yyyMMddHHmmss").format(new Date());
-		File mediaFile;
-		mediaFile = new File(mediaStorageDir.getPath() + File.separator + timeStamp + ".JPG");
-		folderPath = mediaStorageDir.getPath() + File.separator;
-		filename = timeStamp + ".JPG";
-		Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		bitmapUri = Uri.fromFile(mediaFile);
-		i.putExtra(MediaStore.EXTRA_OUTPUT, bitmapUri); // 画像をmediaUriに書き込み
-		startActivityForResult(i, REQUEST_CODE_CAMERA);
-	}
+
 	protected void wakeupGallery(){
 		Intent i = new Intent();
 		i.setType("image/*"); // 画像のみが表示されるようにフィルターをかける
@@ -243,6 +230,12 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 				case 2: // ギャラリーの場合
 					try {
 						InputStream is = getContentResolver().openInputStream(data.getData());
+						folderPath = data.getData().toString();
+						Log.d("フォルダのぱす",folderPath);
+						int from = folderPath.lastIndexOf("/");
+						int to = folderPath.length();
+						filename = folderPath.substring(from + 1, to);
+
 						bm = BitmapFactory.decodeStream(is);
 						is.close();
 						// 選択した画像を表示
@@ -260,30 +253,6 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 			}
 
 		}
-	}
-	protected void endpop(){
-		Intent intent = getIntent();
-		final String un = intent.getStringExtra("username");
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		alertDialogBuilder.setMessage("終了しました。")
-		.setCancelable(false)
-
-		//GPS設定画面起動用ボタンとイベントの定義
-		.setPositiveButton("OK",
-				new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						// TODO 自動生成されたメソッド・スタブ
-						Intent intent = new Intent(D_entry.this,Home.class);
-						intent.putExtra("username", username);
-						startActivity(intent);
-					}
-		});
-		AlertDialog alert = alertDialogBuilder.create();
-		//設定画面へ移動するかの問い合わせダイアログを表示
-		alert.show();
 	}
 
 
@@ -401,6 +370,7 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 											public void onClick(DialogInterface dialog, int id) {
 												// TODO 自動生成されたメソッド・スタブ
 												endpop();
+												Log.d("終了","押されたよー");
 											}
 								});
 								//キャンセルボタン処理
@@ -465,9 +435,6 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 								alert.show();
 		            		}
 
-
-		            	Intent intent = new Intent(D_entry.this,Login.class);
-						startActivity(intent);
 		      		      retMap.put("status_code", "200");
 
 		            } catch (Exception e) {
@@ -522,7 +489,7 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 		    // URL
 		    URI url = null;
 		    try {
-		      url = new URI( "http://54.68.202.192/spotinsert.php" );
+		      url = new URI( "http://54.68.202.192/photoinsert.php" );
 		      Log.d("posttest", "URLはOK");
 		    } catch (URISyntaxException e) {
 		      e.printStackTrace();
@@ -544,13 +511,11 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 		    hashMap.put("menberID", userID);
 		    hashMap.put("mapID", mapID);
 		    hashMap.put("spotID", spotID);
-		    hashMap.put("Title", inputTitle);
-		    hashMap.put("comment", inputComment);
+		    hashMap.put("photoURL",filename);
 		    Log.d("menberID",userID);
 		    Log.d("mapID",mapID);
 		    Log.d("spotID",spotID);
-		    Log.d("title",inputTitle);
-		    Log.d("comment",inputComment);
+		    Log.d("photoURL",filename);
 
 
 
@@ -613,86 +578,14 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 
 		            		Log.d("GETresponce",GETresponce);
 		            		if (GETresponce.equals("0")){
-		            			Log.d("GETresponce","0だったよ");
-		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
-								alertDialogBuilder.setMessage("登録完了しました。\n登録を続けますか？")
-								.setCancelable(false)
-
-								//GPS設定画面起動用ボタンとイベントの定義
-								.setPositiveButton("終了",
-										new DialogInterface.OnClickListener() {
-
-											@Override
-											public void onClick(DialogInterface dialog, int id) {
-												// TODO 自動生成されたメソッド・スタブ
-												endpop();
-											}
-								});
-								//キャンセルボタン処理
-								alertDialogBuilder.setNegativeButton("続ける",
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(DialogInterface dialog, int id) {
-												// TODO 自動生成されたメソッド・スタブ
-												Intent intent = new Intent(D_entry.this,D_entry.class);
-												intent.putExtra("username", username);
-												intent.putExtra("userID", userID);
-												intent.putExtra("mapID", mapID);
-												Integer NextSpotID = Integer.parseInt(spotID) + 1;
-												spotID = NextSpotID.toString();
-												intent.putExtra("spotID", spotID);
-												startActivity(intent);
-											}
-										});
-								AlertDialog alert = alertDialogBuilder.create();
-								//設定画面へ移動するかの問い合わせダイアログを表示
-								alert.show();
 
 		            		}else if (GETresponce.equals("1")){
-		            			Log.d("GETresponce","１だったよ");
-		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
-								alertDialogBuilder.setMessage("１だったよ")
 
-
-								.setPositiveButton("OK",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog, int id) {
-										// TODO 自動生成されたメソッド・スタブ
-										Intent intent = new Intent(D_entry.this,Login.class);
-										startActivity(intent);
-
-									}
-								});
-								AlertDialog alert = alertDialogBuilder.create();
-								//設定画面へ移動するかの問い合わせダイアログを表示
-								alert.show();
 		            		}else{
-		            			Log.d("GETresponce","どれでもなかったよ");
-		            			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(D_entry.this);
-								alertDialogBuilder.setMessage("どっちでもなかったよ")
 
-
-								.setPositiveButton("OK",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog, int id) {
-										// TODO 自動生成されたメソッド・スタブ
-										Intent intent = new Intent(D_entry.this,Login.class);
-										startActivity(intent);
-
-									}
-								});
-								AlertDialog alert = alertDialogBuilder.create();
-								//設定画面へ移動するかの問い合わせダイアログを表示
-								alert.show();
 		            		}
 
 
-		            	Intent intent = new Intent(D_entry.this,Login.class);
-						startActivity(intent);
 		      		      retMap.put("status_code", "200");
 
 		            } catch (Exception e) {
@@ -715,5 +608,32 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 	          return retMap;
 			}
 	 }
+
+	 protected void endpop(){
+			Intent intent = getIntent();
+			final String un = intent.getStringExtra("username");
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+			alertDialogBuilder.setMessage("終了しました。")
+			.setCancelable(false)
+
+			//GPS設定画面起動用ボタンとイベントの定義
+			.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							// TODO 自動生成されたメソッド・スタブ
+							Intent intent = new Intent(D_entry.this,Home.class);
+							intent.putExtra("username", username);
+							intent.putExtra("userID", userID);
+							startActivity(intent);
+						}
+			});
+			AlertDialog alert = alertDialogBuilder.create();
+			//設定画面へ移動するかの問い合わせダイアログを表示
+			alert.show();
+		}
+
 
 }

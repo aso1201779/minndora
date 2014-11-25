@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,14 +30,14 @@ public class Wmap extends Activity implements View.OnClickListener{
 		Intent intent = getIntent();
 		username = intent.getStringExtra("username");
 		userID = intent.getStringExtra("userID");
-		mapdate = intent.getStringExtra("mapdate");
 	    mapURL = intent.getStringExtra("mapURL");
+	    Log.d("mapURL",mapURL);
 
 	    //StrictModeを設定 penaltyDeathを取り除く
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
 
          //TextViewを取得
-         ImageView test = (ImageView)findViewById(R.id.imageView1);
+         ImageView test = (ImageView)findViewById(R.id.Wimage);
          //画像のURL
          String urlString="http://54.68.202.192/img/" + mapURL;
 
@@ -63,7 +64,7 @@ public class Wmap extends Activity implements View.OnClickListener{
 	@Override
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
-		Button MapEnd = (Button)findViewById(R.id.MapEnd);
+		Button MapEnd = (Button)findViewById(R.id.button1);
 		MapEnd.setOnClickListener(this);
 		super.onResume();
 	}
@@ -72,7 +73,7 @@ public class Wmap extends Activity implements View.OnClickListener{
 	public void onClick(View v) {
 		// TODO 自動生成されたメソッド・スタブ
 		switch(v.getId()){
-			case R.id.MapEnd:
+			case R.id.button1:
 				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 				alertDialogBuilder.setMessage("ウォッチを終了しますか？")
 				.setCancelable(false)
