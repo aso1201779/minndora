@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Home extends Activity implements View.OnClickListener{
@@ -17,6 +18,7 @@ public class Home extends Activity implements View.OnClickListener{
 	String un;
 	String username;
 	String userID;
+	String flg;
 
 
 	@Override
@@ -28,11 +30,11 @@ public class Home extends Activity implements View.OnClickListener{
 
 		TextView tv = (TextView)findViewById(R.id.myname);
 		Intent intent = getIntent();
-		username = intent.getStringExtra("username");
-		userID = intent.getStringExtra("userID");
-		Log.d("getuserID",userID);
-
-		if(username != null){
+		flg = intent.getStringExtra("flg");
+		Log.d("flg",flg);
+		if(flg != "0"){
+			username = intent.getStringExtra("username");
+			userID = intent.getStringExtra("userID");
 			tv.setText("ようこそ" + username + "さん");
 		}else{
 			tv.setText("ようこそゲストさん");
@@ -44,9 +46,9 @@ public class Home extends Activity implements View.OnClickListener{
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		ImageButton drive =(ImageButton)findViewById(R.id.drive);
+		ImageView drive =(ImageView)findViewById(R.id.drive);
 		drive.setOnClickListener(this);
-		ImageButton watch =(ImageButton)findViewById(R.id.watch);
+		ImageView watch =(ImageView)findViewById(R.id.watch);
 		watch.setOnClickListener(this);
 	}
 
@@ -56,7 +58,7 @@ public class Home extends Activity implements View.OnClickListener{
 		// TODO 自動生成されたメソッド・スタブ
 		switch(v.getId()) {
 			case R.id.drive:
-				if(gest != 1){
+				if(flg == "1"){
 					intent = new Intent(Home.this, Dmap.class);
 					intent.putExtra("username", username);
 					intent.putExtra("userID", userID);
@@ -80,8 +82,11 @@ public class Home extends Activity implements View.OnClickListener{
 				break;
 			case R.id.watch:
 				intent = new Intent(Home.this,W_Select.class);
-				intent.putExtra("username", username);
-				intent.putExtra("userID", userID);
+				if(flg == "1"){
+					intent.putExtra("username", username);
+					intent.putExtra("userID", userID);
+				}
+				intent.putExtra("flg", flg);
 				startActivity(intent);
 
 		}

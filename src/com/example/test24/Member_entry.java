@@ -37,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -124,7 +125,7 @@ public class Member_entry extends Activity implements View.OnClickListener{
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		Button entry =(Button)findViewById(R.id.btnentry);
+		ImageView entry =(ImageView)findViewById(R.id.btnentry);
 		entry.setOnClickListener(this);
 
 

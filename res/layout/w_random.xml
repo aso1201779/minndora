@@ -26,12 +26,12 @@
         android:layout_height="wrap_content"
         android:text="TextView" />
 
-    <Button
+    <ImageView
         android:id="@+id/watchMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="このマップを見る" />
+        android:src="@drawable/watchmap" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,15 +67,13 @@
         android:layout_gravity="center"
         android:orientation="vertical" >
 
-        <Button
+        <ImageView
             android:id="@+id/backbtn"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="60dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginTop="50dp"
-            android:text="選択画面に戻る" />
+            android:layout_marginTop="40dp"
+            android:src="@drawable/selectback" />
 
     </LinearLayout>
 

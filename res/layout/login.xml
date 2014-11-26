@@ -2,42 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/loginbk"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/myname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="27dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:text="みんドラ"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#ffff00"
             android:textSize="50sp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="30dp" >
+
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="86dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/TextView01"
-            android:layout_alignRight="@+id/TextView01"
-            android:layout_below="@+id/myname"
-            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="0.2"
             android:text="ID"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/userID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_weight="0.8"
+            android:ems="10"
+            android:inputType="textEmailAddress" >
+
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp" >
 
         <TextView
             android:id="@+id/TextView01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/userID"
-            android:layout_marginTop="29dp"
-            android:layout_toLeftOf="@+id/myname"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="0.2"
             android:text="pass"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -45,64 +70,44 @@
             android:id="@+id/password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/TextView01"
-            android:layout_alignBottom="@+id/TextView01"
-            android:layout_alignLeft="@+id/userID"
-            android:layout_alignRight="@+id/userID"
+            android:layout_marginRight="50dp"
+            android:layout_weight="0.8"
             android:ems="10"
-            android:inputType="textEmailAddress">
+            android:inputType="textEmailAddress" />
 
-            <requestFocus />
-        </EditText>
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/member_entry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView3"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:background="#3cb371"
-            android:text=">>新規会員登録&lt;&lt;" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
 
-        <Button
+        <ImageView
             android:id="@+id/login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/password"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
-            android:background="#008b8b"
-            android:text="login" />
+            android:layout_marginTop="28dp"
+            android:src="@drawable/login" />
 
-        <TextView
-            android:id="@+id/textView3"
+        <ImageView
+            android:id="@+id/member_entry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/notMember"
             android:layout_below="@+id/login"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="14dp"
-            android:text="ID、パスワードを忘れた方はこちら" />
+            android:layout_marginTop="23dp"
+            android:src="@drawable/newentry" />
 
-        <EditText
-            android:id="@+id/userID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView2"
-            android:layout_alignBottom="@+id/textView2"
-            android:layout_alignLeft="@+id/member_entry"
-            android:inputType="textEmailAddress"
-            android:ems="10" />
-
-        <Button
+        <ImageView
             android:id="@+id/notMember"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/member_entry"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:text="非会員でスタート" />
-
+            android:layout_marginTop="42dp"
+            android:src="@drawable/nomember" />
     </RelativeLayout>
 
 </LinearLayout>

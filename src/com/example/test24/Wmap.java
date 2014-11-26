@@ -3,11 +3,13 @@ package com.example.test24;
 import java.io.InputStream;
 import java.net.URL;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -15,12 +17,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class Wmap extends Activity implements View.OnClickListener{
 
 	String username;
 	String userID;
 	String mapdate;
 	String mapURL;
+	String flg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +32,12 @@ public class Wmap extends Activity implements View.OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.wmap);
 		Intent intent = getIntent();
+		flg = intent.getStringExtra("flg");
+		if(flg == "1"){
 		username = intent.getStringExtra("username");
 		userID = intent.getStringExtra("userID");
-	    mapURL = intent.getStringExtra("mapURL");
+		}
+		mapURL = intent.getStringExtra("mapURL");
 	    Log.d("mapURL",mapURL);
 
 	    //StrictModeを設定 penaltyDeathを取り除く
@@ -116,8 +123,11 @@ public class Wmap extends Activity implements View.OnClickListener{
 					public void onClick(DialogInterface dialog, int id) {
 						// TODO 自動生成されたメソッド・スタブ
 						Intent intent = new Intent(Wmap.this,Home.class);
+						intent.putExtra("flg", flg);
+						if(flg == "1"){
 						intent.putExtra("username", username);
 						intent.putExtra("userID", userID);
+						}
 						startActivity(intent);
 					}
 		});

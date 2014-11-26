@@ -24,7 +24,6 @@ import com.google.gson.reflect.TypeToken;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -32,9 +31,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 
 public class Login extends Activity implements View.OnClickListener{
@@ -44,6 +42,7 @@ public class Login extends Activity implements View.OnClickListener{
 	private JSONArray rootObjectArray;
 	String inputloginID;
 	String inputloginpass;
+	String flg;
 
 
 	@Override
@@ -56,11 +55,11 @@ public class Login extends Activity implements View.OnClickListener{
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		Button login =(Button)findViewById(R.id.login);
+		ImageView login =(ImageView)findViewById(R.id.login);
 		login.setOnClickListener(this);
-		Button notMember =(Button)findViewById(R.id.notMember);
+		ImageView notMember =(ImageView)findViewById(R.id.notMember);
 		notMember.setOnClickListener(this);
-		Button member_entry =(Button)findViewById(R.id.member_entry);
+		ImageView member_entry =(ImageView)findViewById(R.id.member_entry);
 		member_entry.setOnClickListener(this);
 
 
@@ -86,8 +85,8 @@ public class Login extends Activity implements View.OnClickListener{
 			inputloginID = ID.getText().toString();
 			inputloginpass = pass.getText().toString();
 
-				if(inputloginID != null && !inputloginID.isEmpty()
-					&& inputloginpass != null && !inputloginpass.isEmpty()){
+				if(inputloginID != null && inputloginID != null
+					&& inputloginpass != null && inputloginpass != null){
 
 					if(inputloginID.length() < 8  && inputloginpass.length() < 9){
 
@@ -119,6 +118,8 @@ public class Login extends Activity implements View.OnClickListener{
 			break;
 		case R.id.notMember:
 			intent = new Intent(Login.this, Home.class);
+			flg = "0";
+			intent.putExtra("flg",flg);
 			startActivity(intent);
 			break;
 
@@ -247,6 +248,8 @@ public class Login extends Activity implements View.OnClickListener{
 			      		      	intent = new Intent(Login.this, Home.class);
 			      		      	intent.putExtra("userID", GETmenberID);
 			      		      	intent.putExtra("username",GETusername );
+			      		      	flg = "1";
+			      		      	intent.putExtra("flg",flg);
 			      		      	startActivity(intent);
 
 

@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 
 public class W_Select extends Activity implements View.OnClickListener {
@@ -49,6 +50,7 @@ public class W_Select extends Activity implements View.OnClickListener {
 
 	String set_username;
 	String set_userID;
+	String flg;
 
 
 
@@ -59,8 +61,11 @@ public class W_Select extends Activity implements View.OnClickListener {
 		setContentView(R.layout.w_select);
 
 		Intent intent = getIntent();
-		set_username = intent.getStringExtra("username");
-		set_userID = intent.getStringExtra("userID");
+		flg = intent.getStringExtra("flg");
+		if(flg == "1"){
+			set_username = intent.getStringExtra("username");
+			set_userID = intent.getStringExtra("userID");
+		}
 		Log.d("遷移","遷移しました。");
 
 		// ラジオグループ
@@ -119,7 +124,7 @@ public class W_Select extends Activity implements View.OnClickListener {
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		Button next = (Button)findViewById(R.id.next);
+		ImageView next = (ImageView)findViewById(R.id.next);
 		next.setOnClickListener(this);
 	}
 
@@ -283,9 +288,11 @@ public class W_Select extends Activity implements View.OnClickListener {
 			      		      	intent.putExtra("photoURL",GetphotoURL );
 			      		      	intent.putExtra("mapURL", GetmapURL);
 
+			      		      	intent.putExtra("flg", flg);
+			      		      	if(flg == "1"){
 			      		      	intent.putExtra("username", set_username);
 			      		      	intent.putExtra("userID", set_userID);
-
+			      		      	}
 
 								startActivity(intent);
 

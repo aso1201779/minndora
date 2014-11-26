@@ -72,12 +72,10 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		Button Dentry =(Button)findViewById(R.id.Send);
+		ImageView Dentry =(ImageView)findViewById(R.id.Send);
 		Dentry.setOnClickListener(this);
-		Button DReset =(Button)findViewById(R.id.Reset);
+		ImageView DReset =(ImageView)findViewById(R.id.Reset);
 		DReset.setOnClickListener(this);
-		Button gazouBtn =(Button)findViewById(R.id.gazouBtn);
-		gazouBtn.setOnClickListener(this);
 		ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
 		imageView1.setOnClickListener(this);
 
@@ -131,7 +129,7 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 
 		switch(v.getId()) {
 
-			case R.id.gazouBtn:
+			case R.id.imageView1:
 
 				viewID = 1;
 				camera();

@@ -21,16 +21,16 @@
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/drive"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
             android:src="@drawable/drive2" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/watch"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="170dp"
             android:src="@drawable/watch3" />
 
     </LinearLayout>

@@ -25,18 +25,20 @@ import com.example.test24.W_Select.MyResponseHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class W_Random extends Activity implements View.OnClickListener {
 
 	String username;
@@ -49,6 +51,7 @@ public class W_Random extends Activity implements View.OnClickListener {
 	String seibetu;
 	String title;
 	String mapURL;
+	String flg;
 	private JSONArray rootObjectArray;
 
 	@Override
@@ -57,9 +60,11 @@ public class W_Random extends Activity implements View.OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.w_random);
 		Intent intent = getIntent();
-		username = intent.getStringExtra("username");
-		userID = intent.getStringExtra("userID");
-
+		flg = intent.getStringExtra("flg");
+		if(flg == "1"){
+			username = intent.getStringExtra("username");
+			userID = intent.getStringExtra("userID");
+		}
 		mapID = intent.getStringExtra("mapID");
 		spotID = intent.getStringExtra("spotID");
 		GETmenberID = intent.getStringExtra("GETmenberID");
@@ -68,7 +73,6 @@ public class W_Random extends Activity implements View.OnClickListener {
 		title = intent.getStringExtra("title");
 		photoURL= intent.getStringExtra("photoURL");
 		mapURL = intent.getStringExtra("mapURL");
-		Log.d("mapURL_random",mapURL);
 
 		TextView tv = (TextView)findViewById(R.id.textRandom);
 		tv.setText(GETusername + "さんのマップ");
@@ -109,9 +113,9 @@ public class W_Random extends Activity implements View.OnClickListener {
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		Button back = (Button)findViewById(R.id.backbtn);
+		ImageView back = (ImageView)findViewById(R.id.backbtn);
 		back.setOnClickListener(this);
-		Button watchmap = (Button)findViewById(R.id.watchMap);
+		ImageView watchmap = (ImageView)findViewById(R.id.watchMap);
 		watchmap.setOnClickListener(this);
 	}
 
@@ -124,9 +128,11 @@ public class W_Random extends Activity implements View.OnClickListener {
 		case R.id.watchMap:
 
 			intent = new Intent(W_Random.this,Wmap.class);
-
+			intent.putExtra("flg", flg);
+			if(flg == "1"){
 		      intent.putExtra("username", username);
 		      intent.putExtra("userID", userID);
+			}
 		      intent.putExtra("mapURL",mapURL);
 		      startActivity(intent);
 
