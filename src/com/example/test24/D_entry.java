@@ -20,6 +20,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -29,6 +30,7 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -44,6 +46,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class D_entry extends Activity implements View.OnClickListener, UploadAsyncTaskCallback{
 
 	SQLiteDatabase db = null;
@@ -623,6 +626,7 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 						public void onClick(DialogInterface dialog, int id) {
 							// TODO 自動生成されたメソッド・スタブ
 							Intent intent = new Intent(D_entry.this,Home.class);
+							intent.putExtra("flg", "1");
 							intent.putExtra("username", username);
 							intent.putExtra("userID", userID);
 							startActivity(intent);

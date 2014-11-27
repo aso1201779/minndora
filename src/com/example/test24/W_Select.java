@@ -50,7 +50,7 @@ public class W_Select extends Activity implements View.OnClickListener {
 
 	String set_username;
 	String set_userID;
-	String flg;
+	int flg;
 
 
 
@@ -61,10 +61,11 @@ public class W_Select extends Activity implements View.OnClickListener {
 		setContentView(R.layout.w_select);
 
 		Intent intent = getIntent();
-		flg = intent.getStringExtra("flg");
-		if(flg == "1"){
+		flg = Integer.parseInt(intent.getStringExtra("flg"));
+		if(flg == 1){
 			set_username = intent.getStringExtra("username");
 			set_userID = intent.getStringExtra("userID");
+			Log.d("もらったよ",set_username);
 		}
 		Log.d("遷移","遷移しました。");
 
@@ -288,10 +289,14 @@ public class W_Select extends Activity implements View.OnClickListener {
 			      		      	intent.putExtra("photoURL",GetphotoURL );
 			      		      	intent.putExtra("mapURL", GetmapURL);
 
-			      		      	intent.putExtra("flg", flg);
-			      		      	if(flg == "1"){
+
+			      		      	if(flg == 1){
 			      		      	intent.putExtra("username", set_username);
 			      		      	intent.putExtra("userID", set_userID);
+			      		      	Log.d("Select_username",set_username);
+			      		      	intent.putExtra("flg","1");
+			      		      	}else{
+			      		      	intent.putExtra("flg","0");
 			      		      	}
 
 								startActivity(intent);

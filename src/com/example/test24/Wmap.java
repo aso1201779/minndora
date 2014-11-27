@@ -24,7 +24,7 @@ public class Wmap extends Activity implements View.OnClickListener{
 	String userID;
 	String mapdate;
 	String mapURL;
-	String flg;
+	int flg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +32,8 @@ public class Wmap extends Activity implements View.OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.wmap);
 		Intent intent = getIntent();
-		flg = intent.getStringExtra("flg");
-		if(flg == "1"){
+		flg = Integer.parseInt(intent.getStringExtra("flg"));
+		if(flg == 1){
 		username = intent.getStringExtra("username");
 		userID = intent.getStringExtra("userID");
 		}
@@ -123,10 +123,12 @@ public class Wmap extends Activity implements View.OnClickListener{
 					public void onClick(DialogInterface dialog, int id) {
 						// TODO 自動生成されたメソッド・スタブ
 						Intent intent = new Intent(Wmap.this,Home.class);
-						intent.putExtra("flg", flg);
-						if(flg == "1"){
+						if(flg == 1){
 						intent.putExtra("username", username);
 						intent.putExtra("userID", userID);
+						intent.putExtra("flg","1");
+						}else{
+							intent.putExtra("flg","0");
 						}
 						startActivity(intent);
 					}

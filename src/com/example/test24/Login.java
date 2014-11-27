@@ -118,8 +118,7 @@ public class Login extends Activity implements View.OnClickListener{
 			break;
 		case R.id.notMember:
 			intent = new Intent(Login.this, Home.class);
-			flg = "0";
-			intent.putExtra("flg",flg);
+			intent.putExtra("flg","0");
 			startActivity(intent);
 			break;
 
@@ -249,7 +248,7 @@ public class Login extends Activity implements View.OnClickListener{
 			      		      	intent.putExtra("userID", GETmenberID);
 			      		      	intent.putExtra("username",GETusername );
 			      		      	flg = "1";
-			      		      	intent.putExtra("flg",flg);
+			      		      	intent.putExtra("flg","1");
 			      		      	startActivity(intent);
 
 

@@ -51,7 +51,7 @@ public class W_Random extends Activity implements View.OnClickListener {
 	String seibetu;
 	String title;
 	String mapURL;
-	String flg;
+	int flg;
 	private JSONArray rootObjectArray;
 
 	@Override
@@ -60,8 +60,8 @@ public class W_Random extends Activity implements View.OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.w_random);
 		Intent intent = getIntent();
-		flg = intent.getStringExtra("flg");
-		if(flg == "1"){
+		flg = Integer.parseInt(intent.getStringExtra("flg"));
+		if(flg == 1){
 			username = intent.getStringExtra("username");
 			userID = intent.getStringExtra("userID");
 		}
@@ -128,10 +128,13 @@ public class W_Random extends Activity implements View.OnClickListener {
 		case R.id.watchMap:
 
 			intent = new Intent(W_Random.this,Wmap.class);
-			intent.putExtra("flg", flg);
-			if(flg == "1"){
+
+			if(flg == 1){
 		      intent.putExtra("username", username);
 		      intent.putExtra("userID", userID);
+		      intent.putExtra("flg", "1");
+			}else{
+				intent.putExtra("flg", "0");
 			}
 		      intent.putExtra("mapURL",mapURL);
 		      startActivity(intent);
@@ -141,6 +144,13 @@ public class W_Random extends Activity implements View.OnClickListener {
 
 		case R.id.backbtn:
 			intent = new Intent(W_Random.this,W_Select.class);
+			if(flg == 1){
+			      intent.putExtra("username", username);
+			      intent.putExtra("userID", userID);
+			      intent.putExtra("flg", "1");
+			}else{
+				intent.putExtra("flg", "0");
+			}
 			startActivity(intent);
 			break;
 		}

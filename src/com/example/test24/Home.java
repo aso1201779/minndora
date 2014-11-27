@@ -18,7 +18,7 @@ public class Home extends Activity implements View.OnClickListener{
 	String un;
 	String username;
 	String userID;
-	String flg;
+	int flg;
 
 
 	@Override
@@ -30,15 +30,16 @@ public class Home extends Activity implements View.OnClickListener{
 
 		TextView tv = (TextView)findViewById(R.id.myname);
 		Intent intent = getIntent();
-		flg = intent.getStringExtra("flg");
-		Log.d("flg",flg);
-		if(flg != "0"){
+		flg = Integer.parseInt(intent.getStringExtra("flg"));
+		if(flg == 1){
 			username = intent.getStringExtra("username");
 			userID = intent.getStringExtra("userID");
 			tv.setText("ようこそ" + username + "さん");
+			Log.d("ここだよ","会員");
 		}else{
 			tv.setText("ようこそゲストさん");
 			gest = 1;
+			Log.d("ここだよ","ゲスト");
 		}
 	}
 
@@ -58,7 +59,7 @@ public class Home extends Activity implements View.OnClickListener{
 		// TODO 自動生成されたメソッド・スタブ
 		switch(v.getId()) {
 			case R.id.drive:
-				if(flg == "1"){
+				if(flg == 1){
 					intent = new Intent(Home.this, Dmap.class);
 					intent.putExtra("username", username);
 					intent.putExtra("userID", userID);
@@ -82,11 +83,13 @@ public class Home extends Activity implements View.OnClickListener{
 				break;
 			case R.id.watch:
 				intent = new Intent(Home.this,W_Select.class);
-				if(flg == "1"){
+				if(flg == 1){
 					intent.putExtra("username", username);
 					intent.putExtra("userID", userID);
+					intent.putExtra("flg","1");
+				}else{
+					intent.putExtra("flg","0");
 				}
-				intent.putExtra("flg", flg);
 				startActivity(intent);
 
 		}
