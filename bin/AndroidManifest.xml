@@ -38,6 +38,7 @@
         <activity android:name="com.example.test24.D_entry" android:label="@string/app_name"></activity>
         <activity android:name="com.example.test24.W_Select" android:label="@string/app_name"></activity>
         <activity android:name="com.example.test24.W_Random" android:label="@string/app_name"></activity>
-        <activity android:label="@string/app_name" android:name="com.example.test24.Wmap"></activity></application>
+        <activity android:label="@string/app_name" android:name="com.example.test24.Wmap"></activity>
+        <activity android:label="@string/app_name" android:name="com.example.test24.W_photo"></activity></application>
 
 </manifest>

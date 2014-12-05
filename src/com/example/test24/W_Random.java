@@ -1,40 +1,18 @@
 package com.example.test24;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Random;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.example.test24.W_Select.MyResponseHandler;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -101,7 +79,7 @@ public class W_Random extends Activity implements View.OnClickListener {
             istream.close();
 
              //TextViewの背景に表示
-            test.setBackgroundDrawable(d);
+            test.setImageDrawable(d);
 
          } catch (Exception e) {
              System.out.println("nuu: "+e);
@@ -117,6 +95,8 @@ public class W_Random extends Activity implements View.OnClickListener {
 		back.setOnClickListener(this);
 		ImageView watchmap = (ImageView)findViewById(R.id.watchMap);
 		watchmap.setOnClickListener(this);
+		ImageView w_photo =(ImageView)findViewById(R.id.w_photo);
+		w_photo.setOnClickListener(this);
 	}
 
 	@Override
@@ -153,6 +133,20 @@ public class W_Random extends Activity implements View.OnClickListener {
 			}
 			startActivity(intent);
 			break;
+
+		case R.id.w_photo:
+			intent = new Intent(W_Random.this,W_photo.class);
+			if(flg == 1){
+			      intent.putExtra("username", username);
+			      intent.putExtra("userID", userID);
+			      intent.putExtra("flg", "1");
+			}else{
+				intent.putExtra("flg", "0");
+			}
+			intent.putExtra("photoURL", photoURL);
+			startActivity(intent);
+			break;
+
 		}
 	}
 
