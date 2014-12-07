@@ -7,7 +7,6 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -19,23 +18,23 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.example.test24.Login.MyResponseHandler;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 
-public class W_Select extends Activity implements View.OnClickListener {
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+public class W_Select extends Activity implements View.OnClickListener ,Runnable{
 
 	private LocationManager mLocationManager;
 	private JSONArray rootObjectArray;
@@ -51,7 +50,8 @@ public class W_Select extends Activity implements View.OnClickListener {
 	String set_username;
 	String set_userID;
 	int flg;
-
+	ProgressDialog dialog;
+	private Thread thread;
 
 
 	@Override
@@ -137,14 +137,28 @@ public class W_Select extends Activity implements View.OnClickListener {
 			case R.id.next:
 				if(sei != null && seibetu != null){
 
-					//JSONの呼び出し
-					exec_post();
+					setWait();
+
 				}
 			break;
 		}
 	}
 
-	 private void exec_post() {
+	 private void setWait() {
+		// TODO 自動生成されたメソッド・スタブ
+		 dialog = new ProgressDialog(this);
+		    dialog.setTitle("Please wait");
+		    dialog.setMessage("loading...");
+		    dialog.show();
+
+		    thread = new Thread(W_Select.this);
+		    /* show()メソッドでプログレスダイアログを表示しつつ、
+		     * 別スレッドを使い、裏で重い処理を行う。
+		     */
+		    thread.start();
+	}
+
+	private void exec_post() {
 
 		    Log.d("posttest", "postします");
 
@@ -324,6 +338,31 @@ public class W_Select extends Activity implements View.OnClickListener {
 
 			}
 	 }
+	@Override
+	public void run() {
+		// TODO 自動生成されたメソッド・スタブ
+		try {
+	        //ダイアログがしっかり見えるように少しだけスリープ
+	        //（nnn：任意のスリープ時間・ミリ秒単位）
+	        Thread.sleep(1000);
+	    } catch (InterruptedException e) {
+	        //スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+	    }
+	    //run内でUIの操作をしてしまうと、例外が発生する為、
+	    //Handlerにバトンタッチ
+	    handler.sendEmptyMessage(0);
+	}
+	private Handler handler = new Handler() {
+	    public void handleMessage(Message msg){
+	        // HandlerクラスではActivityを継承してないため
+	        // 別の親クラスのメソッドにて処理を行うようにした。
+	    	//JSONの呼び出し
+			exec_post();
 
+	        // プログレスダイアログ終了
+	        dialog.dismiss();
+	        dialog = null;
+	    }
+	};
 
 }

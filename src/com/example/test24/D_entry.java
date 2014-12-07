@@ -1,14 +1,11 @@
 package com.example.test24;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.http.HttpResponse;
@@ -32,13 +29,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -152,23 +146,12 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 							Log.d("flg","画像をアップロードするよ");
 					        upload(folderPath,filename);
 					        photo_post();
-					        //必ずphotoURLをPOSTしなければならないのか分らん。getmap.phpでテーブル内に値がなかったら
-					        //エラーになるのかね？
+
 
 						}
 
 						//JSONの呼び出し
 						exec_post();
-
-						//photoURLもPOSTできたら嬉しい。けど、getmap.phpを書き換えんといかん
-
-						//helper.insertSpot(db, inputTitle, inputComment);
-
-
-
-
-
-
 
 					}
 				title.setText("");

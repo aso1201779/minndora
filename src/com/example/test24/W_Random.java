@@ -3,11 +3,11 @@ package com.example.test24;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.json.JSONArray;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 public class W_Random extends Activity implements View.OnClickListener {
 
 	String username;
@@ -30,12 +30,15 @@ public class W_Random extends Activity implements View.OnClickListener {
 	String title;
 	String mapURL;
 	int flg;
-	private JSONArray rootObjectArray;
+
+	Drawable d;
+	Bitmap bm;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.w_random);
 		Intent intent = getIntent();
 		flg = Integer.parseInt(intent.getStringExtra("flg"));
@@ -62,7 +65,7 @@ public class W_Random extends Activity implements View.OnClickListener {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
 
          //TextViewを取得
-         ImageView test = (ImageView)findViewById(R.id.w_photo);
+         final ImageView test = (ImageView)findViewById(R.id.w_photo);
          //画像のURL
          String urlString="http://54.68.202.192/img/" + photoURL;
 
@@ -73,17 +76,44 @@ public class W_Random extends Activity implements View.OnClickListener {
             InputStream istream = url.openStream();
 
              //画像をDrawableで取得
-            Drawable d = Drawable.createFromStream(istream, "webimg");
+            d = Drawable.createFromStream(istream, "webimg");
+
+            bm = ((BitmapDrawable) d).getBitmap();
 
              //入力ストリームを閉じる
             istream.close();
 
              //TextViewの背景に表示
-            test.setImageDrawable(d);
+            test.setImageBitmap(bm);
 
          } catch (Exception e) {
              System.out.println("nuu: "+e);
          }
+
+//         test.setOnClickListener(new View.OnClickListener() {
+//   		  @Override
+//   		  public void onClick(View v) {
+//   			ImageView imageView = new ImageView(getApplicationContext());
+//   		    //ImageView imageView = new ImageView(W_Random.this);
+//   		    imageView.setImageBitmap(bm);
+//   		    // ディスプレイの幅を取得する（API 13以上）
+//   		    Display display =  getWindowManager().getDefaultDisplay();
+//   		    Point size = new Point();
+//   		    display.getSize(size);
+//   		    int width = size.x;
+//
+//   		    float factor =  width / bm.getWidth();
+//   		    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//   		    // ダイアログを作成する
+//   		    Dialog dialog = new Dialog(W_Random.this);
+//   		    // タイトルを非表示にする
+//   		    dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//   		    dialog.setContentView(imageView);
+//   		    dialog.getWindow().setLayout((int)(bm.getWidth()*factor), (int)(bm.getHeight()*factor));
+//   		    // ダイアログを表示する
+//   		    dialog.show();
+//   		  }
+//   		});
 
 	}
 
@@ -95,7 +125,7 @@ public class W_Random extends Activity implements View.OnClickListener {
 		back.setOnClickListener(this);
 		ImageView watchmap = (ImageView)findViewById(R.id.watchMap);
 		watchmap.setOnClickListener(this);
-		ImageView w_photo =(ImageView)findViewById(R.id.w_photo);
+		ImageView w_photo = (ImageView)findViewById(R.id.w_photo);
 		w_photo.setOnClickListener(this);
 	}
 
