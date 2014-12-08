@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -55,6 +56,12 @@ public class Wmap extends Activity implements View.OnClickListener,OnTouchListen
     private float minScale = 1F;
     private float maxScale = 5F;
 
+
+
+    private Rect mRect;
+    private Matrix mMatrix = new Matrix();
+    private float[] mValues = new float[9];
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO 自動生成されたメソッド・スタブ
@@ -90,9 +97,8 @@ public class Wmap extends Activity implements View.OnClickListener,OnTouchListen
              //入力ストリームを閉じる
             istream.close();
 
-            bm = ((BitmapDrawable) d).getBitmap();
 
-            //TextViewの背景に表示
+            Bitmap bm = ((BitmapDrawable) d).getBitmap();
             test.setImageBitmap(bm);
 
          } catch (Exception e) {
@@ -155,6 +161,7 @@ public class Wmap extends Activity implements View.OnClickListener,OnTouchListen
 					public void onClick(DialogInterface dialog, int id) {
 						// TODO 自動生成されたメソッド・スタブ
 						Intent intent = new Intent(Wmap.this,Home.class);
+						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						if(flg == 1){
 						intent.putExtra("username", username);
 						intent.putExtra("userID", userID);
@@ -195,8 +202,9 @@ public class Wmap extends Activity implements View.OnClickListener,OnTouchListen
             break;
         case MotionEvent.ACTION_MOVE:
             if (mode == DRAG) {
-                matrix.set(savedMatrix);
-                matrix.postTranslate(event.getX() - start.x, event.getY() - start.y);
+            	imageMove(view,event);
+//                matrix.set(savedMatrix);
+//                matrix.postTranslate(event.getX() - start.x, event.getY() - start.y);
             }
             break;
         }
@@ -225,9 +233,6 @@ public class Wmap extends Activity implements View.OnClickListener,OnTouchListen
                 if (minScale < tmpRatio && tmpRatio < maxScale) {
                     curRatio = tmpRatio;
                     matrix.postScale(scale, scale, mid.x, mid.y);
-                }
-                if(minScale >= tmpRatio){
-                	test.setImageBitmap(bm);
                 }
             }
             break;
@@ -285,5 +290,69 @@ public class Wmap extends Activity implements View.OnClickListener,OnTouchListen
         sb.append("]" );
         Log.d("MyApp", sb.toString());
 	}
+
+    private void imageMove(ImageView iv, MotionEvent e) {
+   	 if (e.getHistorySize() > 0) {
+   	     int x = (int) e.getHistoricalX(0) - (int) e.getX();
+   	     int y = (int) e.getHistoricalY(0) - (int) e.getY();
+   	     iv.scrollBy(x, y); // ①
+
+   	     int new_x = iv.getScrollX();
+   	     int new_y = iv.getScrollY();
+
+   	     mRect = iv.getDrawable().getBounds();
+   	     mMatrix = iv.getImageMatrix();
+   	     mMatrix.getValues(mValues);
+
+   	     // ②
+   	     // 画面上の画像の横サイズ
+   	     int iw = (int) ((int) mRect.width() * mValues[Matrix.MSCALE_X]);
+   	     // 画面上の画像の縦サイズ
+   	     int ih = (int) ((int) mRect.height() * mValues[Matrix.MSCALE_Y]);
+   	     // 画像の横サイズの半分
+   	     int iw_harf = iw / 2;
+   	     // 画像の縦サイズの半分
+   	     int ih_harf = ih / 2;
+   	     // 縦方向の黒くなっているところの高さ
+   	     int black_out_w = (iv.getWidth() / 4) - iw_harf;
+   	     // 縦方向の黒くなっているところの高さ
+   	     int black_out_h = (iv.getHeight() / 4) - ih_harf;
+
+   	     Log.d("imageMove", "new_x=" + Integer.toString(new_x) + ", new_y="
+   	             + Integer.toString(new_y));
+   	     Log.d("imageMove", "_x=" + Integer.toString(iw) + ", _y="
+   	             + Integer.toString(ih));
+   	     Log.d("imageMove", "black_out_w=" + Integer.toString(black_out_w)
+   	             + ", black_out_h=" + Integer.toString(black_out_h));
+
+   	     // 拡大画像がはみ出ないようにする処理
+   	     if (Math.abs(new_x) > black_out_w || Math.abs(new_y) > black_out_h) {
+   	         // new_x, new_yが0の場合を考慮する必要あり
+   	         if (new_x == 0 && new_y == 0) {
+   	             // 何もしない ③
+   	         } else if (new_x == 0) {
+   	             iv.scrollTo(0, new_y
+   	                     / Math.abs(new_y)
+   	                     * (int) Math.min(Math.abs(new_y), Math
+   	                             .abs(black_out_h))); // ④
+   	         } else if (new_y == 0) {
+   	             iv.scrollTo(new_x
+   	                     / Math.abs(new_x)
+   	                     * (int) Math.min(Math.abs(new_x), Math
+   	                             .abs(black_out_w)), 0); // ⑤
+   	         } else {
+   	             iv.scrollTo(new_x
+   	                     / Math.abs(new_x)
+   	                     * (int) Math.min(Math.abs(new_x), Math
+   	                             .abs(black_out_w)), new_y
+   	                     / Math.abs(new_y)
+   	                     * (int) Math.min(Math.abs(new_y), Math
+   	                             .abs(black_out_h))); // ⑥
+   	         }
+   	     }
+   	 }
+   	}
+
+
 
 }

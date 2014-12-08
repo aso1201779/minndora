@@ -17,17 +17,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.os.Build;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
@@ -42,11 +42,12 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
 import com.example.test24.R.id;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+@SuppressLint("NewApi")
+@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class Member_entry extends Activity implements View.OnClickListener{
 
 	SQLiteDatabase db = null;
@@ -305,6 +306,7 @@ public class Member_entry extends Activity implements View.OnClickListener{
 									public void onClick(DialogInterface dialog, int id) {
 										// TODO 自動生成されたメソッド・スタブ
 										Intent intent = new Intent(Member_entry.this,Login.class);
+										intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 										startActivity(intent);
 
 									}

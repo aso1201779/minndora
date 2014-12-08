@@ -7,8 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -95,4 +95,46 @@ public class Home extends Activity implements View.OnClickListener{
 		}
 
 	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO 自動生成されたメソッド・スタブ
+		if(keyCode==KeyEvent.KEYCODE_BACK){
+            // アラートダイアログ
+            dialog();
+            return true;
+        }
+        return false;
+	}
+
+	private void dialog() {
+		// TODO 自動生成されたメソッド・スタブ
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder.setMessage("ログイン画面に移動しますか？")
+		.setCancelable(false)
+
+		//GPS設定画面起動用ボタンとイベントの定義
+		.setPositiveButton("移動する",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						// TODO 自動生成されたメソッド・スタブ
+						Home.this.finish();
+					}
+		});
+		//キャンセルボタン処理
+		alertDialogBuilder.setNegativeButton("キャンセル",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						// TODO 自動生成されたメソッド・スタブ
+						dialog.cancel();
+					}
+				});
+		AlertDialog alert = alertDialogBuilder.create();
+		//設定画面へ移動するかの問い合わせダイアログを表示
+		alert.show();
+	}
+
 }

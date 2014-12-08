@@ -609,6 +609,7 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 						public void onClick(DialogInterface dialog, int id) {
 							// TODO 自動生成されたメソッド・スタブ
 							Intent intent = new Intent(D_entry.this,Home.class);
+							intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 							intent.putExtra("flg", "1");
 							intent.putExtra("username", username);
 							intent.putExtra("userID", userID);

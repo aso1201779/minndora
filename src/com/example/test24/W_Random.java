@@ -93,25 +93,15 @@ public class W_Random extends Activity implements View.OnClickListener {
 //         test.setOnClickListener(new View.OnClickListener() {
 //   		  @Override
 //   		  public void onClick(View v) {
-//   			ImageView imageView = new ImageView(getApplicationContext());
-//   		    //ImageView imageView = new ImageView(W_Random.this);
-//   		    imageView.setImageBitmap(bm);
-//   		    // ディスプレイの幅を取得する（API 13以上）
-//   		    Display display =  getWindowManager().getDefaultDisplay();
-//   		    Point size = new Point();
-//   		    display.getSize(size);
-//   		    int width = size.x;
-//
-//   		    float factor =  width / bm.getWidth();
-//   		    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//   		    // ダイアログを作成する
-//   		    Dialog dialog = new Dialog(W_Random.this);
-//   		    // タイトルを非表示にする
-//   		    dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//   		    dialog.setContentView(imageView);
-//   		    dialog.getWindow().setLayout((int)(bm.getWidth()*factor), (int)(bm.getHeight()*factor));
-//   		    // ダイアログを表示する
-//   		    dialog.show();
+//   			//Bitmap image
+//   			ImageView iv = new ImageView(W_Random.this);
+//   			iv.setImageBitmap(bm);
+//   			iv.setScaleType(ImageView.ScaleType.FIT_XY);
+//   			iv.setAdjustViewBounds(true);
+//   			Dialog dialog = new Dialog(W_Random.this);
+//   			dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//   			dialog.setContentView(iv);
+//   			dialog.show();
 //   		  }
 //   		});
 

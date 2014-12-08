@@ -19,9 +19,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -34,14 +31,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 
 public class Login extends Activity implements View.OnClickListener{
 
 	SQLiteDatabase db = null;
 	MySQLiteOpenHelper helper = null;
 	private JSONArray rootObjectArray;
-	String inputloginID;
-	String inputloginpass;
+	String inputloginID = null;
+	String inputloginpass = null;
 	String flg;
 
 
@@ -85,8 +85,7 @@ public class Login extends Activity implements View.OnClickListener{
 			inputloginID = ID.getText().toString();
 			inputloginpass = pass.getText().toString();
 
-				if(inputloginID != null && inputloginID != null
-					&& inputloginpass != null && inputloginpass != null){
+				if(inputloginID.length() > 0 && inputloginpass.length() > 0){
 
 					if(inputloginID.length() < 8  && inputloginpass.length() < 9){
 
