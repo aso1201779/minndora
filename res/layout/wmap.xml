@@ -11,8 +11,10 @@
     <ImageView
         android:id="@+id/Wimage"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" 
-        android:layout_weight="0.5" />
+        android:layout_height="fill_parent"
+        android:layout_weight="0.5"
+        android:adjustViewBounds="true"
+        android:scaleType="matrix" />
 
     <Button
         android:id="@+id/button1"
