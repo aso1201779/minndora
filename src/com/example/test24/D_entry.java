@@ -61,7 +61,8 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 	String filename;
 	boolean flg = false;
 
-
+	ImageView Dentry;
+	ImageView DReset;
 
 
 
@@ -69,10 +70,12 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		ImageView Dentry =(ImageView)findViewById(R.id.Send);
+		Dentry =(ImageView)findViewById(R.id.Send);
 		Dentry.setOnClickListener(this);
-		ImageView DReset =(ImageView)findViewById(R.id.Reset);
+		Dentry.setImageResource(R.drawable.send);
+		DReset =(ImageView)findViewById(R.id.Reset);
 		DReset.setOnClickListener(this);
+		DReset.setImageResource(R.drawable.reset);
 		ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
 		imageView1.setOnClickListener(this);
 
@@ -133,13 +136,14 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 				break;
 
 			case R.id.Send:
+				Dentry.setImageResource(R.drawable.sousinn_sya);
 				EditText title = (EditText)findViewById(R.id.Title);
 				EditText comment = (EditText)findViewById(R.id.Comment);
 
 				inputTitle = title.getText().toString();
 				inputComment = comment.getText().toString();
 
-					if(inputTitle != null && !inputTitle.isEmpty()){
+					if(inputTitle.length() > 0 ){
 
 
 						if(flg == true){
@@ -153,19 +157,64 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 						//JSONの呼び出し
 						exec_post();
 
+					}else{
+						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+						alertDialogBuilder.setMessage("正しく入力されていません、\n確認してください。")
+
+						 .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									Dentry.setImageResource(R.drawable.send);
+								}
+					});
+						AlertDialog alert = alertDialogBuilder.create();
+						alert.show();
+
 					}
 				title.setText("");
 				comment.setText("");
 			break;
 
 				case R.id.Reset:
-					EditText Rtitle = (EditText)findViewById(R.id.Title);
-					Rtitle.setText("");
-					EditText Rcomment = (EditText)findViewById(R.id.Comment);
-					Rcomment.setText("");
+					DReset.setImageResource(R.drawable.reset_sya);
 
-					ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
-					imageView1.setImageResource(R.drawable.noimage);
+
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+					alertDialogBuilder.setMessage("リセットしてよろしいですか？")
+					.setCancelable(false)
+
+					//GPS設定画面起動用ボタンとイベントの定義
+					.setPositiveButton("リセットする",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									DReset.setImageResource(R.drawable.reset);
+									EditText Rtitle = (EditText)findViewById(R.id.Title);
+									Rtitle.setText("");
+									EditText Rcomment = (EditText)findViewById(R.id.Comment);
+									Rcomment.setText("");
+
+									ImageView imageView1 =(ImageView)findViewById(R.id.imageView1);
+									imageView1.setImageResource(R.drawable.noimage);
+								}
+					});
+					//キャンセルボタン処理
+					alertDialogBuilder.setNegativeButton("キャンセル",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									DReset.setImageResource(R.drawable.reset);
+								}
+							});
+					AlertDialog alert = alertDialogBuilder.create();
+					//設定画面へ移動するかの問い合わせダイアログを表示
+					alert.show();
+
 				break;
 		}
 	}
@@ -424,6 +473,7 @@ public class D_entry extends Activity implements View.OnClickListener, UploadAsy
 		            } catch (Exception e) {
 		            	Log.d("Json取得エラー", "Error");
 		            	retMap.put("status_code", "220");
+
 		            }
 
 		            break;

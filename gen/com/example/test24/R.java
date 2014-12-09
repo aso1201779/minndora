@@ -33,18 +33,24 @@ public final class R {
         public static final int login=0x7f020009;
         public static final int login_sya=0x7f02000a;
         public static final int loginbk=0x7f02000b;
-        public static final int newentry=0x7f02000c;
-        public static final int next=0x7f02000d;
-        public static final int noimage=0x7f02000e;
-        public static final int nomember=0x7f02000f;
-        public static final int rank=0x7f020010;
-        public static final int reset=0x7f020011;
-        public static final int selectback=0x7f020012;
-        public static final int send=0x7f020013;
-        public static final int touroku_sya=0x7f020014;
-        public static final int watch3=0x7f020015;
-        public static final int watch_sya=0x7f020016;
-        public static final int watchmap=0x7f020017;
+        public static final int mapwomiru_sya=0x7f02000c;
+        public static final int modoru_sya=0x7f02000d;
+        public static final int newentry=0x7f02000e;
+        public static final int next=0x7f02000f;
+        public static final int next_sya=0x7f020010;
+        public static final int noimage=0x7f020011;
+        public static final int nomember=0x7f020012;
+        public static final int rank=0x7f020013;
+        public static final int reset=0x7f020014;
+        public static final int reset_sya=0x7f020015;
+        public static final int select_modoru_sya=0x7f020016;
+        public static final int selectback=0x7f020017;
+        public static final int send=0x7f020018;
+        public static final int sousinn_sya=0x7f020019;
+        public static final int touroku_sya=0x7f02001a;
+        public static final int watch3=0x7f02001b;
+        public static final int watch_sya=0x7f02001c;
+        public static final int watchmap=0x7f02001d;
     }
     public static final class id {
         public static final int Comment=0x7f080006;

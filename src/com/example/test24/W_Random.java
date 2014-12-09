@@ -33,6 +33,8 @@ public class W_Random extends Activity implements View.OnClickListener {
 
 	Drawable d;
 	Bitmap bm;
+	ImageView back;
+	ImageView watchmap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,10 +113,12 @@ public class W_Random extends Activity implements View.OnClickListener {
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		ImageView back = (ImageView)findViewById(R.id.backbtn);
+		back = (ImageView)findViewById(R.id.backbtn);
 		back.setOnClickListener(this);
-		ImageView watchmap = (ImageView)findViewById(R.id.watchMap);
+		back.setImageResource(R.drawable.selectback);
+		watchmap = (ImageView)findViewById(R.id.watchMap);
 		watchmap.setOnClickListener(this);
+		watchmap.setImageResource(R.drawable.watchmap);
 		ImageView w_photo = (ImageView)findViewById(R.id.w_photo);
 		w_photo.setOnClickListener(this);
 	}
@@ -126,7 +130,7 @@ public class W_Random extends Activity implements View.OnClickListener {
 
 		switch(v.getId()){
 		case R.id.watchMap:
-
+			watchmap.setImageResource(R.drawable.mapwomiru_sya);
 			intent = new Intent(W_Random.this,Wmap.class);
 
 			if(flg == 1){
@@ -143,6 +147,7 @@ public class W_Random extends Activity implements View.OnClickListener {
 			break;
 
 		case R.id.backbtn:
+			back.setImageResource(R.drawable.select_modoru_sya);
 			intent = new Intent(W_Random.this,W_Select.class);
 			if(flg == 1){
 			      intent.putExtra("username", username);

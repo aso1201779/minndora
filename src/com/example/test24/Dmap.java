@@ -73,6 +73,8 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 	static final int REQUEST_CODE_CAMERA = 1; /* カメラを判定するコード */
 	String filename;
 
+	ImageView cameraBtn;
+
 
 
 	@Override
@@ -96,8 +98,9 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 		username = intent.getStringExtra("username");
 		userID = intent.getStringExtra("userID");
 
-		ImageView cameraBtn =(ImageView)findViewById(R.id.cameraBtn);
+		cameraBtn =(ImageView)findViewById(R.id.cameraBtn);
 		cameraBtn.setOnClickListener(this);
+		cameraBtn.setImageResource(R.drawable.camera);
 		Button MapEndBtn = (Button)findViewById(R.id.MapEndBtn);
 		MapEndBtn.setOnClickListener(this);
 	}
@@ -333,7 +336,7 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 				alert.show();
 				break;
 			case R.id.cameraBtn:
-
+				cameraBtn.setImageResource(R.drawable.camera_sya);
 				// アップロードボタンが押された時
 				String[] str_items = {"カメラを起動", "キャンセル"};
 				new AlertDialog.Builder(this)
@@ -345,9 +348,10 @@ public class Dmap extends Activity implements LocationListener ,View.OnClickList
 						switch(which){
 							case 0:
 								wakeupCamera(); // カメラ起動
+								cameraBtn.setImageResource(R.drawable.camera);
 								break;
-							case 2:
-								// キャンセルを選んだ場合
+							case 1:
+								cameraBtn.setImageResource(R.drawable.camera);
 								break;
 							}
 						}

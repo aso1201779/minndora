@@ -19,7 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -52,6 +54,8 @@ public class W_Select extends Activity implements View.OnClickListener ,Runnable
 	int flg;
 	ProgressDialog dialog;
 	private Thread thread;
+
+	ImageView next;
 
 
 	@Override
@@ -125,8 +129,9 @@ public class W_Select extends Activity implements View.OnClickListener ,Runnable
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		ImageView next = (ImageView)findViewById(R.id.next);
+		next = (ImageView)findViewById(R.id.next);
 		next.setOnClickListener(this);
+		next.setImageResource(R.drawable.next);
 	}
 
 	@Override
@@ -134,11 +139,28 @@ public class W_Select extends Activity implements View.OnClickListener ,Runnable
 		// TODO 自動生成されたメソッド・スタブ
 
 		switch(v.getId()){
+
 			case R.id.next:
+				next.setImageResource(R.drawable.next_sya);
 				if(sei != null && seibetu != null){
 
 					setWait();
 
+				}else{
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+					alertDialogBuilder.setMessage("性別と年齢を選択してください。")
+
+					 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								// TODO 自動生成されたメソッド・スタブ
+								next.setImageResource(R.drawable.next);
+							}
+				});
+
+					AlertDialog alert = alertDialogBuilder.create();
+					alert.show();
 				}
 			break;
 		}
