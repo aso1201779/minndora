@@ -20,6 +20,9 @@ public class Home extends Activity implements View.OnClickListener{
 	String userID;
 	int flg;
 
+	ImageView drive;
+	ImageView watch;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +50,12 @@ public class Home extends Activity implements View.OnClickListener{
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		ImageView drive =(ImageView)findViewById(R.id.drive);
+		drive =(ImageView)findViewById(R.id.drive);
 		drive.setOnClickListener(this);
-		ImageView watch =(ImageView)findViewById(R.id.watch);
+		drive.setImageResource(R.drawable.drive2);
+		watch =(ImageView)findViewById(R.id.watch);
 		watch.setOnClickListener(this);
+		watch.setImageResource(R.drawable.watch3);
 	}
 
 	@Override
@@ -59,6 +64,7 @@ public class Home extends Activity implements View.OnClickListener{
 		// TODO 自動生成されたメソッド・スタブ
 		switch(v.getId()) {
 			case R.id.drive:
+				drive.setImageResource(R.drawable.drive_sya);
 				if(flg == 1){
 					intent = new Intent(Home.this, Dmap.class);
 					intent.putExtra("username", username);
@@ -69,19 +75,20 @@ public class Home extends Activity implements View.OnClickListener{
 					alertDialogBuilder.setMessage("非会員はご利用になれません。")
 
 					.setPositiveButton("OK",
-					new DialogInterface.OnClickListener() {
+							new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							// TODO 自動生成されたメソッド・スタブ
-							dialog.cancel();
+							drive.setImageResource(R.drawable.drive2);
 						}
-					});
+			});
 					AlertDialog alert = alertDialogBuilder.create();
 					alert.show();
 				}
 				break;
 			case R.id.watch:
+				watch.setImageResource(R.drawable.watch_sya);
 				intent = new Intent(Home.this,W_Select.class);
 				if(flg == 1){
 					intent.putExtra("username", username);

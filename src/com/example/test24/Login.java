@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -44,6 +45,10 @@ public class Login extends Activity implements View.OnClickListener{
 	String inputloginpass = null;
 	String flg;
 
+	ImageView login;
+	ImageView notMember;
+	ImageView member_entry;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +60,15 @@ public class Login extends Activity implements View.OnClickListener{
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		ImageView login =(ImageView)findViewById(R.id.login);
+		login =(ImageView)findViewById(R.id.login);
 		login.setOnClickListener(this);
-		ImageView notMember =(ImageView)findViewById(R.id.notMember);
+		login.setImageResource(R.drawable.login);
+		notMember =(ImageView)findViewById(R.id.notMember);
 		notMember.setOnClickListener(this);
-		ImageView member_entry =(ImageView)findViewById(R.id.member_entry);
+		notMember.setImageResource(R.drawable.nomember);
+		member_entry =(ImageView)findViewById(R.id.member_entry);
 		member_entry.setOnClickListener(this);
+		member_entry.setImageResource(R.drawable.newentry);
 
 
 		if(db == null){
@@ -80,6 +88,8 @@ public class Login extends Activity implements View.OnClickListener{
 		// TODO 自動生成されたメソッド・スタブ
 		switch(v.getId()) {
 		case R.id.login:
+			login.setImageResource(R.drawable.login_sya);
+
 			EditText ID = (EditText)findViewById(R.id.userID);
 			EditText pass = (EditText)findViewById(R.id.password);
 			inputloginID = ID.getText().toString();
@@ -96,7 +106,14 @@ public class Login extends Activity implements View.OnClickListener{
 						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 						alertDialogBuilder.setMessage("文字数が多いです")
 
-						 .setPositiveButton("OK", null);
+						 .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									login.setImageResource(R.drawable.login);
+								}
+					});
 						AlertDialog alert = alertDialogBuilder.create();
 						alert.show();
 					}
@@ -104,18 +121,29 @@ public class Login extends Activity implements View.OnClickListener{
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 					alertDialogBuilder.setMessage("正しく入力されていません、\n確認してください。")
 
-					 .setPositiveButton("OK", null);
+					 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								// TODO 自動生成されたメソッド・スタブ
+								login.setImageResource(R.drawable.login);
+							}
+				});
+
 					AlertDialog alert = alertDialogBuilder.create();
 					alert.show();
 				}
 			ID.setText("");
 			pass.setText("");
+
 			break;
 		case R.id.member_entry:
+			member_entry.setImageResource(R.drawable.kaiintouroku_sya);
 			intent = new Intent(Login.this, Member_entry.class);
 			startActivity(intent);
 			break;
 		case R.id.notMember:
+			notMember.setImageResource(R.drawable.hikaiin_sya);
 			intent = new Intent(Login.this, Home.class);
 			intent.putExtra("flg","0");
 			startActivity(intent);
@@ -254,6 +282,19 @@ public class Login extends Activity implements View.OnClickListener{
 			            } catch (Exception e) {
 			            	Log.d("Json取得エラー", "Error");
 			            	retMap.put("status_code", "220");
+			            	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Login.this);
+							alertDialogBuilder.setMessage("IDまたは\npassが違います。")
+
+							 .setPositiveButton("OK",  new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int id) {
+										// TODO 自動生成されたメソッド・スタブ
+										login.setImageResource(R.drawable.login);
+									}
+						});
+							AlertDialog alert = alertDialogBuilder.create();
+							alert.show();
 			            }
 
 			            break;
@@ -264,9 +305,17 @@ public class Login extends Activity implements View.OnClickListener{
 			            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Login.this);
 						alertDialogBuilder.setMessage("IDまたは\npassが違います。")
 
-						 .setPositiveButton("OK", null);
+						 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									login.setImageResource(R.drawable.login);
+								}
+					});
 						AlertDialog alert = alertDialogBuilder.create();
 						alert.show();
+
 			            break;
 
 			          default:
@@ -278,7 +327,5 @@ public class Login extends Activity implements View.OnClickListener{
 
 			}
 	 }
-
-
 
 }

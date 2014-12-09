@@ -23,21 +23,28 @@ public final class R {
     public static final class drawable {
         public static final int back=0x7f020000;
         public static final int camera=0x7f020001;
-        public static final int drive2=0x7f020002;
-        public static final int entry=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int login=0x7f020005;
-        public static final int loginbk=0x7f020006;
-        public static final int newentry=0x7f020007;
-        public static final int next=0x7f020008;
-        public static final int noimage=0x7f020009;
-        public static final int nomember=0x7f02000a;
-        public static final int rank=0x7f02000b;
-        public static final int reset=0x7f02000c;
-        public static final int selectback=0x7f02000d;
-        public static final int send=0x7f02000e;
-        public static final int watch3=0x7f02000f;
-        public static final int watchmap=0x7f020010;
+        public static final int camera_sya=0x7f020002;
+        public static final int drive2=0x7f020003;
+        public static final int drive_sya=0x7f020004;
+        public static final int entry=0x7f020005;
+        public static final int hikaiin_sya=0x7f020006;
+        public static final int ic_launcher=0x7f020007;
+        public static final int kaiintouroku_sya=0x7f020008;
+        public static final int login=0x7f020009;
+        public static final int login_sya=0x7f02000a;
+        public static final int loginbk=0x7f02000b;
+        public static final int newentry=0x7f02000c;
+        public static final int next=0x7f02000d;
+        public static final int noimage=0x7f02000e;
+        public static final int nomember=0x7f02000f;
+        public static final int rank=0x7f020010;
+        public static final int reset=0x7f020011;
+        public static final int selectback=0x7f020012;
+        public static final int send=0x7f020013;
+        public static final int touroku_sya=0x7f020014;
+        public static final int watch3=0x7f020015;
+        public static final int watch_sya=0x7f020016;
+        public static final int watchmap=0x7f020017;
     }
     public static final class id {
         public static final int Comment=0x7f080006;

@@ -25,7 +25,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -66,6 +65,8 @@ public class Member_entry extends Activity implements View.OnClickListener{
 	String inputname;
 	String inputyear;
 	String inputseibetu;
+
+	ImageView entry;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -126,17 +127,10 @@ public class Member_entry extends Activity implements View.OnClickListener{
 	protected void onResume() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onResume();
-		ImageView entry =(ImageView)findViewById(R.id.btnentry);
+		entry =(ImageView)findViewById(R.id.btnentry);
 		entry.setOnClickListener(this);
+		entry.setImageResource(R.drawable.entry);
 
-
-		if(db == null){
-		 helper = new MySQLiteOpenHelper(getApplicationContext());
-		}try{
-			db = helper.getWritableDatabase();
-		}catch(SQLiteException e){
-			return;
-		}
 	}
 
 	@Override
@@ -144,6 +138,7 @@ public class Member_entry extends Activity implements View.OnClickListener{
 		// TODO 自動生成されたメソッド・スタブ
 		switch(v.getId()) {
 		case R.id.btnentry:
+			entry.setImageResource(R.drawable.touroku_sya);
 			aaa = (EditText)findViewById(R.id.userID);
 			bbb = (EditText)findViewById(R.id.password);
 			ccc = (EditText)findViewById(R.id.user_name);
@@ -172,7 +167,14 @@ public class Member_entry extends Activity implements View.OnClickListener{
 						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 						alertDialogBuilder.setMessage("規定以上の文字です。\nもう一度操作してください。")
 
-						 .setPositiveButton("OK", null);
+						 .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int id) {
+									// TODO 自動生成されたメソッド・スタブ
+									entry.setImageResource(R.drawable.entry);
+								}
+					});
 						AlertDialog alert = alertDialogBuilder.create();
 						alert.show();
 					}
@@ -182,7 +184,14 @@ public class Member_entry extends Activity implements View.OnClickListener{
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 					alertDialogBuilder.setMessage("正しく入力されていません、\n確認してください。")
 
-					 .setPositiveButton("OK", null);
+					 .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								// TODO 自動生成されたメソッド・スタブ
+								entry.setImageResource(R.drawable.entry);
+							}
+				});
 					AlertDialog alert = alertDialogBuilder.create();
 					alert.show();
 
