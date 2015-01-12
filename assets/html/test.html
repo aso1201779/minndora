@@ -12,21 +12,22 @@ window.onload = function(){
 }
 function moveTo(pos) {
   if (lastPos != null) {
-    if (lastPos.latitude == pos.coords.latitude && lastPos.longitude == pos.coords.longitude) { return; }
-  else{
+    if (lastPos.latitude == pos.coords.latitude && lastPos.longitude == pos.coords.longitude) { 
+    	return;
+    }else{
     coord = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-    if (posHistory == null) {
-      posHistory = new google.maps.MVCArray([coord]);
-      new google.maps.Polyline({
-        clickable:   false,
-        map:         gmap,
-        path:        posHistory,
-        strokeColor: '#006fff'
-      });
-    } else {
-      posHistory.push(coord);
-    }
-  }
+	    if (posHistory == null) {
+	      posHistory = new google.maps.MVCArray([coord]);
+	      new google.maps.Polyline({
+	        clickable:   false,
+	        map:         gmap,
+	        path:        posHistory,
+	        strokeColor: '#006fff'
+	      });
+	    } else {
+	      posHistory.push(coord);
+	    }
+  　}
   }else{
 	  coord = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
   }
