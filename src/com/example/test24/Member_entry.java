@@ -292,7 +292,7 @@ public class Member_entry extends Activity implements View.OnClickListener{
 				HashMap<String,Object> retMap = new HashMap<String,Object>();
 
 	            // 正常に受信できた場合は200
-				switch (response.getStatusLine().getStatusCode()) {
+			switch (response.getStatusLine().getStatusCode()) {
 		          case HttpStatus.SC_OK:
 		            Log.d("posttest", "レスポンス取得に成功");
 
